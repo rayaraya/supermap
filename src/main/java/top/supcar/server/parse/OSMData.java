@@ -6,6 +6,7 @@ import org.xml.sax.SAXException;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -14,6 +15,7 @@ public class OSMData {
 
     private String filepath;
     private Map<String,Element> map;
+    private Map<String,Way> roads = new HashMap<String,Way>();
     private String apiURL;
 
     public OSMData(String apiURL) {
@@ -21,8 +23,7 @@ public class OSMData {
         filepath = setPath();
     }
 
-    public OSMData() {
-        filepath = setPath();
+    public OSMData() {filepath = setPath();
     }
 
     public void setApiURL(String apiURL){
@@ -77,19 +78,19 @@ public class OSMData {
                     case "living_street":
                     case "raceway":
                     case "road":
-
+                        roads.put((String)entry.getKey(),(Way)entry.getValue());
                         break;
                     default:
-                        it.remove();
                         break;
                 }
             }
             else
                 it.remove();
         }
+        map = null;
     }
-    public void printMap(){
-        Iterator it = map.entrySet().iterator();
+    public void printRoads(){
+        Iterator it = roads.entrySet().iterator();
         String key;
         Element val;
         Way temp;
@@ -106,6 +107,9 @@ public class OSMData {
     }
     public Map<String,Element> getMap(){
         return map;
+    }
+    public Map<String,Way> getRoads(){
+        return roads;
     }
 
     private String setPath(){

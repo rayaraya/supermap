@@ -1,17 +1,21 @@
 package top.supcar.server.parse;
 
 import info.pavie.basicosmparser.model.Element;
+import info.pavie.basicosmparser.model.Way;
+import top.supcar.server.graph.Distance;
+
 import java.util.Map;
 
 public class TMain {
     public static void main(String[] args) throws Exception {
 
-        String url = "http://api.openstreetmap.org/api/0.6/map?bbox=30.291518484046108,59.937524639867405,30.322846685340053,59.94612279900326";
-        Map<String,Element> map;
+        String url = "http://www.overpass-api.de/api/xapi?way[bbox=30.258916543827283,59.917968282222404,30.34371726404213,59.94531882096226]";
+        Map<String,Way> roads;
         OSMData data = new OSMData(url);
         data.loadData();
         data.makeMap();
-        map = data.getMap();
-        data.printMap();
+        roads = data.getRoads();
+        //data.printRoads();
+        Distance.setMilestones(roads);
     }
 }
