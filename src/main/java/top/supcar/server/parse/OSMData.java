@@ -109,7 +109,7 @@ public class OSMData {
     }
 
     private String setPath(){
-        URL furl = getClass().getResource("/resources/top/supcar/server/parse/map.osm");
+        URL furl = getClass().getResource("/top/supcar/server/parse/map.osm");
         return furl.getPath();
     }
 
