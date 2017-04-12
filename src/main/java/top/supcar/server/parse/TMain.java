@@ -14,7 +14,7 @@ public class TMain {
         OSMData data = new OSMData(url);
         data.loadData();
         data.makeMap();
-        roads = data.getRoads();
+        roads = data.getMap();
         //data.printRoads();
         Distance.setMilestones(roads);
     }

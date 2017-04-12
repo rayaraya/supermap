@@ -1,52 +1,56 @@
-package top.supcar.server.parse;
+package top.supcar.server.graph;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import info.pavie.basicosmparser.model.Element;
 import info.pavie.basicosmparser.model.*;
+import info.pavie.basicosmparser.model.Node;
+import top.supcar.server.parse.OSMData;
 
 
 public class Graph {
     private static final double R = 6371000; // Earth's radius
     private static final double TRANS = Math.PI/180;
-    public Map <Node, Map<Double, Node>[]> map;
-    private Map<String, Element> interMap;
+    public Map <Node, List<Node>> adjList;
+    private Map<String, Way> interMap;
 
-    public void setInterMap(){
-        String url = "http://api.openstreetmap.org/api/0.6/map?bbox=30.291518484046108,59.937524639867405,30.322846685340053,59.94612279900326";
-        OSMData data = new OSMData(url);
-        data.loadData();
-        data.makeMap();
-        this.interMap = data.getMap();
+    public void setInterMap(Map<String,Way> map) {
+        interMap = map;
+    }
+
+    private Map<String, Way> getInterMap(){
+        return this.interMap;
     }
 
     public void setMap(){
-        Iterator interMapIter = interMap.entrySet().iterator();
-        Iterator roadIter;
-        Iterator mapIter;
-        Map.Entry currEntry;
+        Iterator<Map.Entry<String, Way>> interMapIter = interMap.entrySet().iterator();
+        Iterator<Node> roadIter;
+        Map.Entry<String, Way> currEntry;
         Element currElement;
         List<Node> road;
+        List<Node> vertexList = new ArrayList<>();
+        Iterator vertexListIter;
+      //  vertexListIter = vertexList.iterator();
 
         while (interMapIter.hasNext()){
-            currEntry = (Map.Entry) interMapIter.next();
-            currElement = (Element) currEntry.getValue();
+            currEntry = interMapIter.next();
+            currElement = currEntry.getValue();
             road = ((Way) currElement).getNodes();
             roadIter = road.listIterator();
-            Node currNode = (Node) roadIter.next();
+            Node currNode = roadIter.next();
+            vertexList.add(currNode);
             Node nextNode;
 
             while (roadIter.hasNext()){
-                nextNode = (Node) roadIter.next();
-                double currDistance = getDistance(currNode, nextNode);
+                nextNode = roadIter.next();
+                vertexList.add(nextNode);
+                // double currDistance = getDistance(currNode, nextNode);
                 // adding elements
-                mapIter = map.entrySet().iterator();
-                while (mapIter.hasNext()){
-
-                }
+                // Map<Node, List<Node>> currV, nextV;
             }
         }
+        System.out.println(vertexList);
     }
 
     private double getDistance(Node currNode, Node nextNode) {
@@ -64,4 +68,18 @@ public class Graph {
         return  R*p;
     }
 
+
+    public static void main(String[] args){
+        Graph graph = new Graph();
+        OSMData data = new OSMData();
+        data.loadData();
+        data.makeMap();
+        Map<String, Way> testMap;
+        testMap = data.getMap();
+        graph.setInterMap(testMap);
+        Map<String, Way> m;
+        m = graph.getInterMap();
+        System.out.println(m);
+        graph.setMap();
+    }
 }
