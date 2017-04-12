@@ -3,9 +3,7 @@ package top.supcar.server.parse;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.net.URL;
 import info.pavie.basicosmparser.model.Element;
-import java.util.Map;
 import info.pavie.basicosmparser.model.*;
 
 
