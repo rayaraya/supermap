@@ -1,4 +1,4 @@
-package top.supcar.server.parse;
+package top.supcar.server.graph;
 
 import java.util.Iterator;
 import java.util.List;
@@ -11,14 +11,10 @@ public class Graph {
     private static final double R = 6371000; // Earth's radius
     private static final double TRANS = Math.PI/180;
     public Map <Node, Map<Double, Node>[]> map;
-    private Map<String, Element> interMap;
+    private Map<String, Way> interMap;
 
-    public void setInterMap(){
-        String url = "http://api.openstreetmap.org/api/0.6/map?bbox=30.291518484046108,59.937524639867405,30.322846685340053,59.94612279900326";
-        OSMData data = new OSMData(url);
-        data.loadData();
-        data.makeMap();
-        this.interMap = data.getMap();
+    public void setInterMap(Map<String,Way> map) {
+        interMap = map;
     }
 
     public void setMap(){

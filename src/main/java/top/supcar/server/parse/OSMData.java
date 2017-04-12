@@ -15,7 +15,7 @@ public class OSMData {
 
     private String filepath;
     private Map<String,Element> map;
-    private Map<String,Way> roads = new HashMap<String,Way>();
+    private Map<String,Way> siftedMap = new HashMap<String,Way>();
     private String apiURL;
 
     public OSMData(String apiURL) {
@@ -78,7 +78,7 @@ public class OSMData {
                     case "living_street":
                     case "raceway":
                     case "road":
-                        roads.put((String)entry.getKey(),(Way)entry.getValue());
+                        siftedMap.put((String)entry.getKey(),(Way)entry.getValue());
                         break;
                     default:
                         break;
@@ -89,8 +89,8 @@ public class OSMData {
         }
         map = null;
     }
-    public void printRoads(){
-        Iterator it = roads.entrySet().iterator();
+    public void printSmap(){
+        Iterator it = siftedMap.entrySet().iterator();
         String key;
         Element val;
         Way temp;
@@ -105,11 +105,8 @@ public class OSMData {
             System.out.println(nodes);
         }
     }
-    public Map<String,Element> getMap(){
-        return map;
-    }
-    public Map<String,Way> getRoads(){
-        return roads;
+    public Map<String,Way> getMap(){
+        return siftedMap;
     }
 
     private String setPath(){
