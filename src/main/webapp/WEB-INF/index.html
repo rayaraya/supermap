@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <title>Ivan</title>
+    <link rel="stylesheet" href="https://openlayers.org/en/v4.0.1/css/ol.css" type="text/css">
+    <style>
+        .map {
+            height: 500px;
+            width: 100%;
+        }
+        .info {
+            height: 100px;
+            width: 300px;
+        }
+    </style>
+    <style>
+        .ol-dragbox {
+            background-color: rgba(255,255,255,0.4);
+            border-color: rgb(0, 17, 53);
+        }
+    </style>
+    <script src="https://openlayers.org/en/v4.0.1/build/ol.js" type="text/javascript"></script>
+</head>
+<body>
+<div id="map" class="map"></div>
+<div id="info"></div>
+<script type="text/javascript">
+    //модифицированный обработчик из библиотеки
+    ol.events.condition.ctrlShiftKeysOnly = function(mapBrowserEvent) {
+        var originalEvent = mapBrowserEvent.originalEvent;
+        return (!originalEvent.altKey &&
+        (ol.has.MAC ? originalEvent.metaKey : originalEvent.ctrlKey) &&
+        originalEvent.shiftKey);
+    };
+    var map = new ol.Map({
+        target: 'map',
+        layers: [
+            new ol.layer.Tile({
+                source: new ol.source.OSM()
+            }),
+            new ol.layer.Vector({
+                title: 'Earthquakes',
+                source: new ol.source.Vector({
+                    url: 'https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_day.geojson',
+                    format: new ol.format.GeoJSON()
+                }),
+                style: new ol.style.Style({
+                    image: new ol.style.Circle({
+                        radius: 3,
+                        fill: new ol.style.Fill({color: 'red'})
+                    })
+                })
+            }),
+        ],
+        view: new ol.View({
+            //projection: 'EPSG:4326',
+            center: ol.proj.fromLonLat([30.2425,59.9426]),
+            zoom: 13
+            //  maxResolution: 0.703125
+        })
+    });
+    var infoBox = document.getElementById('info');
+    var dragBox = new ol.interaction.DragBox({
+        condition: ol.events.condition.platformModifierKeyOnly
+    });
+    map.addInteraction(dragBox);
+    dragBox.on('boxend', function(){
+        infoBox.innerHTML = '&nbsp;';
+        var rectangle = dragBox.getGeometry().getCoordinates(false)[0];
+        var vertexA = rectangle[0];
+        var vertexB = rectangle[1];
+        var vertexC = rectangle[2];
+        var vertexD = rectangle[3];
+        var lowerLeft, upperRight;
+        if(vertexA[0] != vertexB[0]) {
+            if (vertexA[0] < vertexB[0]) {
+                upperRight = vertexB;
+                lowerLeft = vertexD;
+            }
+            else {
+                lowerLeft = vertexB;
+                upperRight = vertexD;
+            }
+        }
+        else {
+            if (vertexA[1] < vertexB[1]) {
+                lowerLeft = vertexA;
+                upperRight = vertexC;
+            }
+            else {
+                upperRight = vertexA;
+                lowerLeft = vertexC;
+            }
+        }
+        lowerLeft = ol.proj.toLonLat(lowerLeft);
+        upperRight =  ol.proj.toLonLat(upperRight);
+        var str = 'http://www.overpass-api.de/api/xapi?way[bbox='
+            + lowerLeft[0] + ','
+            + lowerLeft[1] + ','
+            + upperRight[0] + ','
+            + upperRight[1] + ']';
+        //console.log(str);
+        infoBox.innerHTML = str;
+    })
+</script>
+</body>
+</html>
