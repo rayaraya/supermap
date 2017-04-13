@@ -44,11 +44,28 @@ public class Graph {
 
             while (roadIter.hasNext()){
                 nextNode = roadIter.next();
-                if (!(vertexList.contains(nextNode))) 
-                    vertexList.add(nextNode);
-                // double currDistance = getDistance(currNode, nextNode);
-                // adding elements
-                // Map<Node, List<Node>> currV, nextV;
+                boolean isAdded = false;
+                if (!(vertexList.contains(currNode))) {
+                    vertexList.add(currNode);
+                    isAdded = true;
+                }
+                nextNode = roadIter.next();
+                List<Node> toAdd = new ArrayList<>();
+                double currDistance = getDistance(currNode, nextNode);
+                if (isAdded) {
+                    toAdd.add(nextNode);
+                    adjList.put(currNode, toAdd);
+                }
+                else {
+                    try {   // непонятный NullPointerException
+                        toAdd = adjList.get(currNode);
+                    } catch (Exception ex) {
+                        System.out.println(ex);
+                    }
+                  //  adjList.remove(currNode);     // не работают никакие функции с adjList
+                    toAdd.add(nextNode);
+                  //  adjList.put(currNode, toAdd);
+                }
             }
         }
         System.out.println(vertexList);
