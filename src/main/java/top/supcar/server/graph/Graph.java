@@ -14,6 +14,7 @@ public class Graph {
     private static final double TRANS = Math.PI/180;
     public Map <Node, Map<Double, Node>[]> map;
     private Map<String, Way> interMap;
+    private Map<String, Double> weightList;
 
     public void setInterMap(Map<String,Way> map) {
         interMap = map;
@@ -30,8 +31,6 @@ public class Graph {
         Element currElement;
         List<Node> road;
         List<Node> vertexList = new ArrayList<>();
-        Iterator vertexListIter;
-      //  vertexListIter = vertexList.iterator();
 
         while (interMapIter.hasNext()){
             currEntry = interMapIter.next();
@@ -43,7 +42,6 @@ public class Graph {
             Node nextNode;
 
             while (roadIter.hasNext()){
-                nextNode = roadIter.next();
                 boolean isAdded = false;
                 if (!(vertexList.contains(currNode))) {
                     vertexList.add(currNode);
@@ -66,6 +64,8 @@ public class Graph {
                     toAdd.add(nextNode);
                   //  adjList.put(currNode, toAdd);
                 }
+                String key = currNode.getId() + nextNode.getId();
+                weightList.put(key, currDistance);
             }
         }
         System.out.println(vertexList);
@@ -87,6 +87,10 @@ public class Graph {
         return  R*p;
     }
 
+       public Map<String, Double> getWeightList(){
+        return weightList;
+    }
+    
        public static void main(String[] args){
         Graph graph = new Graph();
         OSMData data = new OSMData();
