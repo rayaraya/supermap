@@ -1,10 +1,12 @@
 package top.supcar.server.graph;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import info.pavie.basicosmparser.model.Element;
 import info.pavie.basicosmparser.model.*;
+import info.pavie.basicosmparser.model.Node;
+import top.supcar.server.parse.OSMData;
 
 
 public class Graph {
@@ -16,34 +18,41 @@ public class Graph {
     public void setInterMap(Map<String,Way> map) {
         interMap = map;
     }
+    
+    private Map<String, Way> getInterMap(){
+        return this.interMap;
+    }
 
-    public void setMap(){
-        Iterator interMapIter = interMap.entrySet().iterator();
-        Iterator roadIter;
-        Iterator mapIter;
-        Map.Entry currEntry;
+   public void setMap(){
+        Iterator<Map.Entry<String, Way>> interMapIter = interMap.entrySet().iterator();
+        Iterator<Node> roadIter;
+        Map.Entry<String, Way> currEntry;
         Element currElement;
         List<Node> road;
+        List<Node> vertexList = new ArrayList<>();
+        Iterator vertexListIter;
+      //  vertexListIter = vertexList.iterator();
 
         while (interMapIter.hasNext()){
-            currEntry = (Map.Entry) interMapIter.next();
-            currElement = (Element) currEntry.getValue();
+            currEntry = interMapIter.next();
+            currElement = currEntry.getValue();
             road = ((Way) currElement).getNodes();
             roadIter = road.listIterator();
-            Node currNode = (Node) roadIter.next();
+            Node currNode = roadIter.next();
+            vertexList.add(currNode);
             Node nextNode;
 
             while (roadIter.hasNext()){
-                nextNode = (Node) roadIter.next();
-                double currDistance = getDistance(currNode, nextNode);
+                nextNode = roadIter.next();
+                vertexList.add(nextNode);
+                // double currDistance = getDistance(currNode, nextNode);
                 // adding elements
-                mapIter = map.entrySet().iterator();
-                while (mapIter.hasNext()){
-
-                }
+                // Map<Node, List<Node>> currV, nextV;
             }
         }
+        System.out.println(vertexList);
     }
+
 
     private double getDistance(Node currNode, Node nextNode) {
         double lat1 = currNode.getLat()*TRANS;
