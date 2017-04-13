@@ -44,7 +44,8 @@ public class Graph {
 
             while (roadIter.hasNext()){
                 nextNode = roadIter.next();
-                vertexList.add(nextNode);
+                if (!(vertexList.contains(nextNode))) 
+                    vertexList.add(nextNode);
                 // double currDistance = getDistance(currNode, nextNode);
                 // adding elements
                 // Map<Node, List<Node>> currV, nextV;
