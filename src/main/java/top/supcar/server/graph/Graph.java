@@ -14,6 +14,7 @@ public class Graph {
     private static final double TRANS = Math.PI/180;
     public Map <Node, List<Node>> adjList;
     private Map<String, Way> interMap;
+    private Map<String, Double> weightList;
 
     public void setInterMap(Map<String,Way> map) {
         interMap = map;
@@ -29,9 +30,7 @@ public class Graph {
         Map.Entry<String, Way> currEntry;
         Element currElement;
         List<Node> road;
-        List<Node> vertexList = new ArrayList<>();
-        Iterator vertexListIter;
-      //  vertexListIter = vertexList.iterator();
+        List<Node> vertexList = new ArrayList<>();  // список вершин
 
         while (interMapIter.hasNext()){
             currEntry = interMapIter.next();
@@ -39,18 +38,38 @@ public class Graph {
             road = ((Way) currElement).getNodes();
             roadIter = road.listIterator();
             Node currNode = roadIter.next();
+         //   System.out.println(currNode);
             vertexList.add(currNode);
             Node nextNode;
 
             while (roadIter.hasNext()){
+                boolean isAdded = false;
+                if (!(vertexList.contains(currNode))) {
+                    vertexList.add(currNode);
+                    isAdded = true;
+                }
                 nextNode = roadIter.next();
-                vertexList.add(nextNode);
-                // double currDistance = getDistance(currNode, nextNode);
-                // adding elements
-                // Map<Node, List<Node>> currV, nextV;
+                List<Node> toAdd = new ArrayList<>();
+                double currDistance = getDistance(currNode, nextNode);
+                if (isAdded) {
+                    toAdd.add(nextNode);
+                    adjList.put(currNode, toAdd);
+                }
+                else {
+                    try {   // непонятный NullPointerException
+                        toAdd = adjList.get(currNode);
+                    } catch (Exception ex) {
+                        System.out.println(ex);
+                    }
+                  //  adjList.remove(currNode);     // не работают никакие функции с adjList
+                    toAdd.add(nextNode);
+                  //  adjList.put(currNode, toAdd);
+                }
+                String key = currNode.getId() + nextNode.getId();
+                weightList.put(key, currDistance);
+                }
             }
-        }
-        System.out.println(vertexList);
+   // System.out.println(vertexList);
     }
 
     private double getDistance(Node currNode, Node nextNode) {
@@ -79,7 +98,11 @@ public class Graph {
         graph.setInterMap(testMap);
         Map<String, Way> m;
         m = graph.getInterMap();
-        System.out.println(m);
+     //   System.out.println(m);
         graph.setMap();
+    }
+
+    public Map<String, Double> getWeightList(){
+        return weightList;
     }
 }
