@@ -69,4 +69,18 @@ public class Graph {
         return  R*p;
     }
 
+       public static void main(String[] args){
+        Graph graph = new Graph();
+        OSMData data = new OSMData();
+        data.loadData();
+        data.makeMap();
+        Map<String, Way> testMap;
+        testMap = data.getMap();
+        graph.setInterMap(testMap);
+        Map<String, Way> m;
+        m = graph.getInterMap();
+        System.out.println(m);
+        graph.setMap();
+    }
+    
 }
