@@ -12,7 +12,7 @@ import top.supcar.server.parse.OSMData;
 public class Graph {
     private static final double R = 6371000; // Earth's radius
     private static final double TRANS = Math.PI/180;
-    public Map <Node, Map<Double, Node>[]> map;
+    public Map<Node, List<Node>> adjList;
     private Map<String, Way> interMap;
     private Map<String, Double> weightList;
 
