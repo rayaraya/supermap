@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.HashMap;
 import info.pavie.basicosmparser.model.*;
 import info.pavie.basicosmparser.model.Node;
 import top.supcar.server.parse.OSMData;
@@ -19,12 +20,13 @@ public class Graph {
     public void setInterMap(Map<String,Way> map) {
         interMap = map;
     }
-    
+
     private Map<String, Way> getInterMap(){
         return this.interMap;
     }
 
-   public void setMap(){
+    public void setMap(){
+        adjList = new HashMap<>();
         Iterator<Map.Entry<String, Way>> interMapIter = interMap.entrySet().iterator();
         Iterator<Node> roadIter;
         Map.Entry<String, Way> currEntry;
@@ -38,6 +40,7 @@ public class Graph {
             road = ((Way) currElement).getNodes();
             roadIter = road.listIterator();
             Node currNode = roadIter.next();
+            //System.out.println(currNode);
             vertexList.add(currNode);
             Node nextNode;
 
@@ -49,26 +52,25 @@ public class Graph {
                 }
                 nextNode = roadIter.next();
                 List<Node> toAdd = new ArrayList<>();
+                toAdd.clear();
                 double currDistance = getDistance(currNode, nextNode);
                 if (isAdded) {
                     toAdd.add(nextNode);
                     adjList.put(currNode, toAdd);
                 }
                 else {
-                    try {   // непонятный NullPointerException
-                        toAdd = adjList.get(currNode);
-                    } catch (Exception ex) {
-                        System.out.println(ex);
-                    }
-                  //  adjList.remove(currNode);     // не работают никакие функции с adjList
+                    //toAdd = adjList.get(currNode);
+                    adjList.remove(currNode);
                     toAdd.add(nextNode);
-                  //  adjList.put(currNode, toAdd);
+                    adjList.put(currNode, toAdd);
                 }
+                weightList = new HashMap<>();
                 String key = currNode.getId() + nextNode.getId();
                 weightList.put(key, currDistance);
+                currNode=nextNode;
             }
         }
-        System.out.println(vertexList);
+        //System.out.println(vertexList);
     }
 
 
@@ -87,11 +89,11 @@ public class Graph {
         return  R*p;
     }
 
-       public Map<String, Double> getWeightList(){
+    public Map<String, Double> getWeightList(){
         return weightList;
     }
-    
-       public static void main(String[] args){
+
+    public static void main(String[] args){
         Graph graph = new Graph();
         OSMData data = new OSMData();
         data.loadData();
@@ -101,8 +103,7 @@ public class Graph {
         graph.setInterMap(testMap);
         Map<String, Way> m;
         m = graph.getInterMap();
-        System.out.println(m);
+        //System.out.println(m);
         graph.setMap();
     }
-    
 }
