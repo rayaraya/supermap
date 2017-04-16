@@ -33,6 +33,7 @@ public class Graph {
         Element currElement;
         List<Node> road;
         List<Node> vertexList = new ArrayList<>();
+        weightList = new HashMap<>();
 
         while (interMapIter.hasNext()){
             currEntry = interMapIter.next();
@@ -64,7 +65,6 @@ public class Graph {
                     toAdd.add(nextNode);
                     adjList.put(currNode, toAdd);
                 }
-                weightList = new HashMap<>();
                 String key = currNode.getId() + nextNode.getId();
                 weightList.put(key, currDistance);
                 currNode=nextNode;
