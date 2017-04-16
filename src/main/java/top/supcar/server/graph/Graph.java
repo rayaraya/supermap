@@ -13,7 +13,7 @@ import top.supcar.server.parse.OSMData;
 public class Graph {
     private static final double R = 6371000; // Earth's radius
     private static final double TRANS = Math.PI/180;
-    public Map<Node, List<Node>> adjList;
+    private Map<Node, List<Node>> adjList;
     private Map<String, Way> interMap;
     private Map<String, Double> weightList;
 
@@ -33,6 +33,7 @@ public class Graph {
         Element currElement;
         List<Node> road;
         List<Node> vertexList = new ArrayList<>();
+        weightList = new HashMap<>();
 
         while (interMapIter.hasNext()){
             currEntry = interMapIter.next();
@@ -64,7 +65,6 @@ public class Graph {
                     toAdd.add(nextNode);
                     adjList.put(currNode, toAdd);
                 }
-                weightList = new HashMap<>();
                 String key = currNode.getId() + nextNode.getId();
                 weightList.put(key, currDistance);
                 currNode=nextNode;
@@ -92,10 +92,15 @@ public class Graph {
     public Map<String, Double> getWeightList(){
         return weightList;
     }
+    
+    public Map<Node, List<Node>> getAdjList(){
+        return this.adjList;
+    }
 
     public static void main(String[] args){
         Graph graph = new Graph();
-        OSMData data = new OSMData();
+        String url = "http://www.overpass-api.de/api/xapi?way[bbox=30.258916543827283,59.917968282222404,30.34371726404213,59.94531882096226]";
+        OSMData data = new OSMData(url);
         data.loadData();
         data.makeMap();
         Map<String, Way> testMap;
@@ -105,5 +110,9 @@ public class Graph {
         m = graph.getInterMap();
         //System.out.println(m);
         graph.setMap();
+        Map<Node, List<Node>> adj = graph.getAdjList();
+        //System.out.println(adj);
+        Map<String, Double> w = graph.getWeightList();
+        //System.out.println(w);
     }
 }
