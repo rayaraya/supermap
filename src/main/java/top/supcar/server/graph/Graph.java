@@ -97,22 +97,5 @@ public class Graph {
         return this.adjList;
     }
 
-    public static void main(String[] args){
-        Graph graph = new Graph();
-        String url = "http://www.overpass-api.de/api/xapi?way[bbox=30.258916543827283,59.917968282222404,30.34371726404213,59.94531882096226]";
-        OSMData data = new OSMData(url);
-        data.loadData();
-        data.makeMap();
-        Map<String, Way> testMap;
-        testMap = data.getMap();
-        graph.setInterMap(testMap);
-        Map<String, Way> m;
-        m = graph.getInterMap();
-        //System.out.println(m);
-        graph.setMap();
-        Map<Node, List<Node>> adj = graph.getAdjList();
-        //System.out.println(adj);
-        Map<String, Double> w = graph.getWeightList();
-        //System.out.println(w);
-    }
+    //больше никаких отдельных тестовых мейнов, используем один, потом его не будет, только запуск сервера
 }
