@@ -1,8 +1,9 @@
 package top.supcar.server.holder;
 
+import top.supcar.server.SelectedRect;
+import top.supcar.server.graph.Distance;
 import top.supcar.server.model.RoadThing;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -14,24 +15,23 @@ import java.util.Map;
 public class Holder {
 				private List<List<List<RoadThing>>> table;
 				private Map<RoadThing, int[]> adresses;
-				private int tableSizeX;
+				private int tableSizeX; //(number of rows)
 				private int tableSizeY;
-				private double cellSize;
-				private double lowerLeftLat, lowerLeftLon, upperRightLat, upperRightLon;
+				private double cellSizeMet, cellSizeLatDeg, cellSizeLonDeg;
 
 
-				public Holder(double lowerLeftLat, double lowerLeftLon, double upperRightLat,
-				              double upperRightLon, double cellSize) {
+				public Holder(double cellSize) {
 
 								int i, j;
-								double dX = upperRightLat - lowerLeftLat;
-								double dY = upperRightLon - lowerLeftLon;
+								double dX = Distance.latDegToMeters(SelectedRect.getUpperRight().getLat() - SelectedRect
+												.getLowerLeft().getLat());
+								double dY = Distance.lonDegToMeters(SelectedRect.getUpperRight().getLon() - SelectedRect
+												.getLowerLeft().getLon());
 
-								this.cellSize = cellSize;
-								this.lowerLeftLat = lowerLeftLat;
-								this.lowerLeftLon = lowerLeftLon;
-								this.upperRightLat = upperRightLat;
-								this.upperRightLon = upperRightLon;
+								this.cellSizeMet = cellSize;
+								cellSizeLatDeg = Distance.metersToLatDeg(cellSize);
+								cellSizeLonDeg = Distance.metersToLonDeg(cellSize);
+
 
 								tableSizeX = ((int)(dX/cellSize) == dX/cellSize) ? (int)(dX/cellSize) :
 												(int)(dX/cellSize) + 1;
@@ -51,9 +51,16 @@ public class Holder {
 				public void updatePosition(RoadThing thing) {
 								double lon = thing.getLon();
 								double lat = thing.getLat();
+								int row, line;
+								int[] posInTable = new int[2];
 								/* TODO: Add exception */
 								if(!adresses.containsKey(thing)) {
-												//
+												posInTable[0] = row =(int)((lat - SelectedRect.getLowerLeft().getLat())
+																/cellSizeLatDeg);
+												posInTable[1] = line =(int)((lon - SelectedRect.getLowerLeft().getLon())
+																/cellSizeLonDeg);
+												adresses.put(thing, posInTable);
+												table.get(row).get(line).add(thing);
 								}
 				}
 }

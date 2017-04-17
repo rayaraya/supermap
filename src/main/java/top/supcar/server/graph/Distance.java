@@ -3,6 +3,7 @@ package top.supcar.server.graph;
 import info.pavie.basicosmparser.model.Element;
 import info.pavie.basicosmparser.model.Node;
 import info.pavie.basicosmparser.model.Way;
+import top.supcar.server.SelectedRect;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -10,15 +11,35 @@ import java.util.List;
 import java.util.Map;
 
 /**
-	* Created by 1 on 12.04.2017.
+	* Operations with coordinates and distances
+	* !!!!!! Needs to be created in main
 	*/
 public class Distance {
-				private static final double R = 6371000; // Earth's radius
-				private static final double TRANS = Math.PI/180;
+
+
+
+				private static double metersPerDegLat;
+				private static double metersPerDegLon;
+
+				public Distance() {
+
+								Node x0y0 = new Node(0, SelectedRect.getLowerLeft().getLat(), SelectedRect
+												.getLowerLeft().getLon());
+								Node x1y0 = new Node(0, SelectedRect.getUpperRight().getLat(), SelectedRect
+												.getLowerLeft().getLon());
+
+								Node x0y1 = new Node(0, SelectedRect.getLowerLeft().getLat(), SelectedRect
+												.getUpperRight().getLon());
+
+								metersPerDegLat = distanceBetween(x0y0, x1y0)/(x1y0.getLat() - x0y0.getLat());
+								metersPerDegLon = distanceBetween(x0y0, x0y1)/(x0y1.getLon() - x0y0.getLon());
+				}
 				/**
 					* @return distance in meters
 					*/
-				private static double distanceBetween(Node a, Node b) {
+				public static double distanceBetween(Node a, Node b) {
+								double R = 6371000; // Earth's radius
+								double TRANS = Math.PI/180;
 
 								double lat1 = a.getLat()*TRANS;
 								double lat2 = b.getLat()*TRANS;
@@ -34,6 +55,18 @@ public class Distance {
 								return  d;
 				}
 
+				public static double latDegToMeters(double deg) {
+								return deg*metersPerDegLat;
+				}
+				public static double lonDegToMeters(double deg) {
+								return deg*metersPerDegLon;
+				}
+				public static double metersToLatDeg(double meters) {
+								return meters/metersPerDegLat;
+				}
+				public static double metersToLonDeg(double meters) {
+								return meters/metersPerDegLon;
+				}
 				/**
 					*
 					* For each pair Way, Node
