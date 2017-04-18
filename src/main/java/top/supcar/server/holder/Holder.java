@@ -4,10 +4,7 @@ import top.supcar.server.SelectedRect;
 import top.supcar.server.graph.Distance;
 import top.supcar.server.model.RoadThing;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
 	* Container for RoadThings
@@ -61,6 +58,20 @@ public class Holder {
 																/cellSizeLonDeg);
 												adresses.put(thing, posInTable);
 												table.get(row).get(line).add(thing);
+								}
+				}
+				public void dump() {
+								Iterator itX = table.iterator();
+								Iterator itY, itCell;
+								int x, y;
+								while(itX.hasNext()) {
+												itY = ((List)itX.next()).iterator();
+												while(itY.hasNext()) {
+																itCell = ((List)itY.next()).iterator();
+																while(itCell.hasNext()) {
+																				System.out.println( itCell.next());
+																}
+												}
 								}
 				}
 }
