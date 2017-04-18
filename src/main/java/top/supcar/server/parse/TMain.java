@@ -20,5 +20,21 @@ public class TMain {
         Distance.setMilestones(roads);
        // WSServer server = new WSServer();
         //server.run();
+        
+        // graph
+        Graph graph = new Graph();
+        Map<String, Way> testMap;
+        testMap = data.getMap();
+        graph.setInterMap(testMap);
+        Map<String, Way> m;
+        m = graph.getInterMap();
+        graph.setMap();
+        Map<Node, List<Node>> adj = graph.getAdjList();
+        //    System.out.println(adj);
+        Map<String, Double> w = graph.getWeightList();
+        Node first = graph.vertexList.get(1);
+        Node last = graph.vertexList.get(2);
+        List<Node> road = graph.getWay(first,last);
+        System.out.println(road);
     }
 }
