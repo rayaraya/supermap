@@ -26,8 +26,15 @@ public class WSocket {
     @OnWebSocketMessage
     public void onText(String message) {
         //System.out.println("message: " + message);
+        Double lon = 30.21617;
         try {
-            this.session.getRemote().sendString("serv otvet: " + message );
+            for(int i = 0; i < 100000; i++) {
+                lon += 0.0001;
+                System.out.println(lon);
+                this.session.getRemote().sendString(lon.toString());
+                Thread.sleep(10);
+            }
+
         } catch (Exception e) {
             e.printStackTrace();
         }

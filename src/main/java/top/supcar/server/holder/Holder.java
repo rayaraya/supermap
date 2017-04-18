@@ -63,15 +63,18 @@ public class Holder {
 				public void dump() {
 								Iterator itX = table.iterator();
 								Iterator itY, itCell;
-								int x, y;
+								int x = 0, y = 0;
 								while(itX.hasNext()) {
 												itY = ((List)itX.next()).iterator();
+												y = 0;
 												while(itY.hasNext()) {
 																itCell = ((List)itY.next()).iterator();
 																while(itCell.hasNext()) {
-																				System.out.println( itCell.next());
+																				System.out.println("(" + x + ";" + y + ")" + itCell.next());
 																}
+																y++;
 												}
+												x++;
 								}
 				}
 }
