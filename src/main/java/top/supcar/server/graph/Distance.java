@@ -12,23 +12,23 @@ import java.util.Map;
 
 /**
 	* Operations with coordinates and distances
-	* !!!!!! Needs to be created in main
+	*
 	*/
 public class Distance {
 
 
 
-				private static double metersPerDegLat;
-				private static double metersPerDegLon;
+				private double metersPerDegLat;
+				private double metersPerDegLon;
 
-				public Distance() {
+				public Distance(SelectedRect selectedRect) {
 
-								Node x0y0 = new Node(0, SelectedRect.getLowerLeft().getLat(), SelectedRect
+								Node x0y0 = new Node(0, selectedRect.getLowerLeft().getLat(), selectedRect
 												.getLowerLeft().getLon());
-								Node x1y0 = new Node(0, SelectedRect.getUpperRight().getLat(), SelectedRect
+								Node x1y0 = new Node(0, selectedRect.getUpperRight().getLat(), selectedRect
 												.getLowerLeft().getLon());
 
-								Node x0y1 = new Node(0, SelectedRect.getLowerLeft().getLat(), SelectedRect
+								Node x0y1 = new Node(0, selectedRect.getLowerLeft().getLat(), selectedRect
 												.getUpperRight().getLon());
 
 								metersPerDegLat = distanceBetween(x0y0, x1y0)/(x1y0.getLat() - x0y0.getLat());
@@ -37,7 +37,7 @@ public class Distance {
 				/**
 					* @return distance in meters
 					*/
-				public static double distanceBetween(Node a, Node b) {
+				public double distanceBetween(Node a, Node b) {
 								double R = 6371000; // Earth's radius
 								double TRANS = Math.PI/180;
 
@@ -55,18 +55,19 @@ public class Distance {
 								return  d;
 				}
 
-				public static double latDegToMeters(double deg) {
+				public double latDegToMeters(double deg) {
 								return deg*metersPerDegLat;
 				}
-				public static double lonDegToMeters(double deg) {
+				public double lonDegToMeters(double deg) {
 								return deg*metersPerDegLon;
 				}
-				public static double metersToLatDeg(double meters) {
+				public double metersToLatDeg(double meters) {
 								return meters/metersPerDegLat;
 				}
-				public static double metersToLonDeg(double meters) {
+				public double metersToLonDeg(double meters) {
 								return meters/metersPerDegLon;
 				}
+				/*
 				/**
 					*
 					* For each pair Way, Node
@@ -77,7 +78,7 @@ public class Distance {
 					* @return  Map with concatenation (WayId+NodeId) as key and way length in meters
 					* as value
 					*/
-
+/*
 				public static Map< String, Double> setMilestones(Map<String,Way> roads) {
 
 								Map< String, Double> milestones = new HashMap< String, Double>();
@@ -124,5 +125,5 @@ public class Distance {
 
 								return milestones;
 				}
-
+*/
 }

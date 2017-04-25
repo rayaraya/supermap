@@ -5,4 +5,6 @@ package top.supcar.server.model;
 	*/
 public class ModelConstants {
 				public static final double CITY_CAR_DEF_LEN = 4;
+				public static final double CITY_CAR_DEF_SPEED = 0;
+				public static final double CITY_CAR_DEF_MAX_ACC = 3; //meters per sec*sec
 }

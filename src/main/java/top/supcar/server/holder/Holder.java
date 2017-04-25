@@ -1,6 +1,8 @@
 package top.supcar.server.holder;
 
+import info.pavie.basicosmparser.model.Node;
 import top.supcar.server.SelectedRect;
+import top.supcar.server.SessionObjects;
 import top.supcar.server.graph.Distance;
 import top.supcar.server.model.RoadThing;
 
@@ -9,57 +11,53 @@ import java.util.*;
 /**
 	* Container for RoadThings
 	*/
-public class Holder {
-				private List<List<List<RoadThing>>> table;
-				private Map<RoadThing, int[]> adresses;
-				private int tableSizeX; //(number of rows)
-				private int tableSizeY;
-				private double cellSizeMet, cellSizeLatDeg, cellSizeLonDeg;
+public abstract class Holder {
+				List<List<List<RoadThing>>> table;
+				Map<RoadThing, int[]> adresses;
+				protected int tableSizeX; //(number of rows)
+				protected int tableSizeY;
+				protected double cellSizeLatDeg, cellSizeLonDeg;
+				protected SessionObjects sessionObjects;
 
 
-				public Holder(double cellSize) {
+				public Holder(SessionObjects sessionObjects, double cellSize) {
 
+								this.sessionObjects = sessionObjects;
+								Distance distance = sessionObjects.getDistance();
+								SelectedRect selectedRect = sessionObjects.getSelectedRect();
 								int i, j;
-								double dX = Distance.latDegToMeters(SelectedRect.getUpperRight().getLat() - SelectedRect
+								double dY = distance.latDegToMeters(selectedRect.getUpperRight().getLat() -
+												selectedRect
 												.getLowerLeft().getLat());
-								double dY = Distance.lonDegToMeters(SelectedRect.getUpperRight().getLon() - SelectedRect
+								double dX = distance.lonDegToMeters(selectedRect.getUpperRight().getLon() -
+												selectedRect
 												.getLowerLeft().getLon());
 
-								this.cellSizeMet = cellSize;
-								cellSizeLatDeg = Distance.metersToLatDeg(cellSize);
-								cellSizeLonDeg = Distance.metersToLonDeg(cellSize);
+								//this.cellSizeMet = cellSize;
+								cellSizeLatDeg = distance.metersToLatDeg(cellSize);
+								cellSizeLonDeg = distance.metersToLonDeg(cellSize);
 
 
-								tableSizeX = ((int)(dX/cellSize) == dX/cellSize) ? (int)(dX/cellSize) :
-												(int)(dX/cellSize) + 1;
-								tableSizeY = ((int)(dY/cellSize) == dY/cellSize) ? (int)(dY/cellSize) :
-												(int)(dX/cellSize) + 1;
+								tableSizeX = ((int) (dX / cellSize) == dX / cellSize) ? (int) (dX / cellSize) :
+												(int) (dX / cellSize) + 1;
+								tableSizeY = ((int) (dY / cellSize) == dY / cellSize) ? (int) (dY / cellSize) :
+												(int) (dX / cellSize) + 1;
 
 								table = new ArrayList<List<List<RoadThing>>>(tableSizeX);
 
-								for(i = 0; i < tableSizeX; i++) {
+								for (i = 0; i < tableSizeX; i++) {
 												table.add(i, new ArrayList<List<RoadThing>>(tableSizeY));
-												for(j = 0; j < tableSizeY; j++) {
+												for (j = 0; j < tableSizeY; j++) {
 																(table.get(i)).add(j, new LinkedList<RoadThing>());
 												}
 								}
+
+								System.out.println("holder sizex: " + tableSizeX + " Y: " + tableSizeY);
+
+								adresses = new HashMap<>();
 				}
 
-				public void updatePosition(RoadThing thing) {
-								double lon = thing.getLon();
-								double lat = thing.getLat();
-								int row, line;
-								int[] posInTable = new int[2];
-								/* TODO: Add exception */
-								if(!adresses.containsKey(thing)) {
-												posInTable[0] = row =(int)((lat - SelectedRect.getLowerLeft().getLat())
-																/cellSizeLatDeg);
-												posInTable[1] = line =(int)((lon - SelectedRect.getLowerLeft().getLon())
-																/cellSizeLonDeg);
-												adresses.put(thing, posInTable);
-												table.get(row).get(line).add(thing);
-								}
-				}
+
 				public void dump() {
 								Iterator itX = table.iterator();
 								Iterator itY, itCell;
@@ -77,4 +75,38 @@ public class Holder {
 												x++;
 								}
 				}
+
+				List<List<List<RoadThing>>> getTable() {
+								return table;
+				}
+
+				public Map<RoadThing, int[]> getAdresses() {
+								return adresses;
+				}
+				public Iterator iterator() {
+								return new HolderIterator(this);
+				}
+
+				protected int findRow(double lon) {
+								return (int)((lon - sessionObjects.getSelectedRect().getLowerLeft().getLon())
+																/cellSizeLonDeg);
+				}
+				protected int findLine(double lat) {
+								return (int)((lat - sessionObjects.getSelectedRect().getLowerLeft().getLat())
+																/cellSizeLatDeg);
+				}
+
+				public List<RoadThing> getNearbyThings(Node node) {
+
+								double lon = node.getLon();
+								double lat = node.getLat();
+								int row = findRow(lon);
+								int line = findLine(lat);
+								List<RoadThing> list = new LinkedList<>();
+
+								//table.get(row).get(line).add(car);
+								return null;
+
+				}
+
 }

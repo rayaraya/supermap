@@ -1,18 +1,19 @@
 package top.supcar.server.model;
 
+import info.pavie.basicosmparser.model.Node;
+
 /**
 	* Created by 1 on 16.04.2017.
 	*/
 public abstract class RoadThing {
-				private double lat;
-				private double lon;
+				protected Node pos;
+				protected String type;
 
-				public double getLat() {
-								return lat;
-				}
-				public double getLon() {
-								return lon;
+				public Node getPos() {
+								return pos;
 				}
 
-
+				public String getType() {
+								return type;
+				}
 }
