@@ -1,5 +1,6 @@
 package top.supcar.server;
 
+import com.google.gson.Gson;
 import info.pavie.basicosmparser.model.Node;
 import info.pavie.basicosmparser.model.Way;
 import org.eclipse.jetty.websocket.api.Session;
@@ -13,6 +14,7 @@ import top.supcar.server.physics.Physics;
 import top.supcar.server.update.CarsUpdater;
 import top.supcar.server.update.WorldUpdater;
 
+import java.io.IOException;
 import java.util.Map;
 
 /**
@@ -21,9 +23,10 @@ import java.util.Map;
 public class ClientProcessor {
 				SessionObjects sessionObjects;
 				private Session session;
-
+				Gson gson;
 				public ClientProcessor(Session session) {
 								this.session = session;
+								this.gson = new Gson();
 				}
 
 				public void prepare() {
@@ -44,7 +47,7 @@ public class ClientProcessor {
 
 								Map<String, Way> roads;
 								OSMData data = new OSMData(url);
-								//data.loadData();
+								data.loadData();
 								data.makeMap();
 								roads = data.getMap();
 								Graph graph = new Graph();
@@ -76,14 +79,25 @@ public class ClientProcessor {
 												worldUpdater.update();
 												double lat = corolla.getPos().getLat();
 												double lon = corolla.getPos().getLon();
+												double[] cts =  {lat, lon};
 												try {
-
-
-																session.getRemote().sendString(corolla.getPos().getLat() + " " + corolla
-																								.getPos().getLon());
-																Thread.sleep(1);
+																sendJson(cts);
+																System.out.println(cts);
+																//session.getRemote().sendString(lat + " " + lon;
+																Thread.sleep(10);
 												}catch (Exception e) {System.out.println("caught exception");}
 								}
+
+				}
+
+				private void sendJson(double[] coor){
+								double[][] cord = {coor};
+								String point = gson.toJson(cord);
+					try {
+						session.getRemote().sendString(point);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
 
 				}
 
