@@ -4,6 +4,7 @@ import top.supcar.server.SelectedRect;
 import top.supcar.server.SessionObjects;
 import top.supcar.server.model.Car;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -121,9 +122,9 @@ public class CarHolder extends Holder {
 								System.out.println("car placed at: " + row + " " + line);
 				}
 
-				public List<Car> getCars(){
+				public ArrayList<Car> getCars(){
 								Iterator it = iterator();
-								List<Car> list = new LinkedList<>();
+								ArrayList<Car> list = new ArrayList<>();
 								while(it.hasNext()) {
 												list.add((Car)it.next());
 								}

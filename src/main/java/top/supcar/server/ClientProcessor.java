@@ -7,6 +7,7 @@ import org.eclipse.jetty.websocket.api.Session;
 import top.supcar.server.graph.Distance;
 import top.supcar.server.graph.Graph;
 import top.supcar.server.holder.CarHolder;
+import top.supcar.server.model.Car;
 import top.supcar.server.model.CityCar;
 import top.supcar.server.model.CityCarFactory;
 import top.supcar.server.parse.OSMData;
@@ -15,15 +16,17 @@ import top.supcar.server.update.CarsUpdater;
 import top.supcar.server.update.WorldUpdater;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Map;
 
 /**
 	* Created by 1 on 25.04.2017.
 	*/
 public class ClientProcessor {
-				SessionObjects sessionObjects;
+				private SessionObjects sessionObjects;
 				private Session session;
-				Gson gson;
+				private Gson gson;
+
 				public ClientProcessor(Session session) {
 								this.session = session;
 								this.gson = new Gson();
@@ -47,7 +50,7 @@ public class ClientProcessor {
 
 								Map<String, Way> roads;
 								OSMData data = new OSMData(url);
-								data.loadData();
+								//data.loadData();
 								data.makeMap();
 								roads = data.getMap();
 								Graph graph = new Graph();
@@ -67,38 +70,40 @@ public class ClientProcessor {
 								sessionObjects.setCarsUpdater(carsUpdater);
 								WorldUpdater worldUpdater = new WorldUpdater(sessionObjects);
 								sessionObjects.setWorldUpdater(worldUpdater);
+
 				}
 
 				public void go() {
 								WorldUpdater worldUpdater = sessionObjects.getWorldUpdater();
 								CityCarFactory ccFactory = new CityCarFactory(sessionObjects);
-								SelectedRect selectedRect =  sessionObjects.getSelectedRect();
+								SelectedRect selectedRect = sessionObjects.getSelectedRect();
 								CityCar corolla = ccFactory.createCar(selectedRect.getLowerLeft(), selectedRect
 																.getUpperRight());
-								while(true) {
+								while (true) {
 												worldUpdater.update();
-												double lat = corolla.getPos().getLat();
-												double lon = corolla.getPos().getLon();
-												double[] cts =  {lat, lon};
 												try {
-																sendJson(cts);
-																System.out.println(cts);
+																sendJson();
 																//session.getRemote().sendString(lat + " " + lon;
-																Thread.sleep(10);
-												}catch (Exception e) {System.out.println("caught exception");}
+																Thread.sleep(100);
+												} catch (Exception e) {System.out.println("caught exception");}
 								}
 
 				}
 
-				private void sendJson(double[] coor){
-								double[][] cord = {coor};
-								String point = gson.toJson(cord);
-					try {
-						session.getRemote().sendString(point);
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
+				private void sendJson() {
+								ArrayList<double[]> carsCoordinates = new ArrayList<>();
+								ArrayList<Car> cars = sessionObjects.getCarHolder().getCars();
+								for (Car car : cars) {
+												double[] coordinates = {car.getPos().getLon(), car.getPos().getLat()};
+												carsCoordinates.add(coordinates);
+												try {
+																String point = gson.toJson(carsCoordinates);
+																session.getRemote().sendString(point);
+												} catch (Exception e) {
+																e.printStackTrace();
+												}
 
+								}
 				}
-
 }
+
