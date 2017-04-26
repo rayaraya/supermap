@@ -21,10 +21,10 @@ public class WSocket {
         //System.out.println("Connect: " + session.getRemoteAddress().getAddress());
         try {
             this.session = session;
-            session.getRemote().sendString("helloo!");
+            //session.getRemote().sendString("helloo!");
             clientProcessor = new ClientProcessor(session);
             clientProcessor.prepare();
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -34,7 +34,6 @@ public class WSocket {
         //System.out.println("message: " + message);
         try {
           clientProcessor.go();
-
         } catch (Exception e) {
             e.printStackTrace();
         }
