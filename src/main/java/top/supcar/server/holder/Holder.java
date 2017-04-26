@@ -57,7 +57,6 @@ public abstract class Holder {
 								adresses = new HashMap<>();
 				}
 
-
 				public void dump() {
 								Iterator itX = table.iterator();
 								Iterator itY, itCell;
@@ -83,6 +82,7 @@ public abstract class Holder {
 				public Map<RoadThing, int[]> getAdresses() {
 								return adresses;
 				}
+
 				public Iterator iterator() {
 								return new HolderIterator(this);
 				}
@@ -96,17 +96,74 @@ public abstract class Holder {
 																/cellSizeLatDeg);
 				}
 
-				public List<RoadThing> getNearbyThings(Node node) {
-
+				public List<RoadThing> getNearby(Node node) {
+								boolean closeToLeft = false, closeToRight = false, closeToUp = false,
+																closeToLow = false;
 								double lon = node.getLon();
 								double lat = node.getLat();
 								int row = findRow(lon);
 								int line = findLine(lat);
 								List<RoadThing> list = new LinkedList<>();
-
-								//table.get(row).get(line).add(car);
-								return null;
-
+								for (RoadThing thing: table.get(row).get(line)) {
+												list.add(thing);
+								}
+								double toLeftBorder = lon - cellSizeLonDeg*row;
+								double toRightBorder = cellSizeLatDeg - toLeftBorder;
+								double toUpperBorder = lat - cellSizeLatDeg*line;
+								double toLowerBorder = cellSizeLatDeg - lat;
+								if(toLeftBorder < cellSizeLonDeg/2) {
+												if(row > 0) {
+																closeToLeft = true;
+																for (RoadThing thing: table.get(row - 1).get(line)) {
+																				list.add(thing);
+																}
+												}
+								}
+								if(toRightBorder < cellSizeLonDeg/2) {
+												if(row < tableSizeX - 1) {
+																closeToRight = true;
+																for (RoadThing thing: table.get(row + 1).get(line)) {
+																				list.add(thing);
+																}
+												}
+								}
+								if(toLowerBorder < cellSizeLatDeg/2) {
+												if(line > 0) {
+																closeToLow = true;
+																for (RoadThing thing: table.get(row).get(line - 1)) {
+																				list.add(thing);
+																}
+												}
+								}
+								if(toUpperBorder < cellSizeLatDeg/2) {
+												if(line < tableSizeY) {
+																closeToUp = true;
+																for (RoadThing thing: table.get(row - 1).get(line)) {
+																				list.add(thing);
+																}
+												}
+								}
+								if(closeToLeft && closeToUp) {
+												for (RoadThing thing: table.get(row - 1).get(line + 1)) {
+																list.add(thing);
+												}
+								}
+								if(closeToUp && closeToRight) {
+												for (RoadThing thing: table.get(row + 1).get(line + 1)) {
+																list.add(thing);
+												}
+								}
+								if(closeToRight && closeToLow) {
+												for (RoadThing thing: table.get(row + 1).get(line - 1)) {
+																list.add(thing);
+												}
+								}
+								if(closeToLeft && closeToLow) {
+												for (RoadThing thing: table.get(row - 1).get(line - 1)) {
+																list.add(thing);
+												}
+								}
+								return list;
 				}
 
 }
