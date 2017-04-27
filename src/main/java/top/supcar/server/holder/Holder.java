@@ -41,7 +41,7 @@ public abstract class Holder {
 								tableSizeX = ((int) (dX / cellSize) == dX / cellSize) ? (int) (dX / cellSize) :
 												(int) (dX / cellSize) + 1;
 								tableSizeY = ((int) (dY / cellSize) == dY / cellSize) ? (int) (dY / cellSize) :
-												(int) (dX / cellSize) + 1;
+												(int) (dY / cellSize) + 1;
 
 								table = new ArrayList<List<List<RoadThing>>>(tableSizeX);
 
@@ -87,13 +87,26 @@ public abstract class Holder {
 								return new HolderIterator(this);
 				}
 
+				/**
+					*
+					* @param lon
+					* @return row(X coordinate in the table) if lon is correct, -1 otherwise
+					*/
+
 				protected int findRow(double lon) {
-								return (int)((lon - sessionObjects.getSelectedRect().getLowerLeft().getLon())
+								int row = (int)((lon - sessionObjects.getSelectedRect().getLowerLeft().getLon())
 																/cellSizeLonDeg);
+								return (row >= 0 && row < tableSizeX) ? row : -1;
 				}
+				/**
+					*
+					* @param lat
+					* @return line(Y coordinate in the table) if lat is correct, -1 otherwise
+					*/
 				protected int findLine(double lat) {
-								return (int)((lat - sessionObjects.getSelectedRect().getLowerLeft().getLat())
+								int line =  (int)((lat - sessionObjects.getSelectedRect().getLowerLeft().getLat())
 																/cellSizeLatDeg);
+								return (line >= 0 && line < tableSizeY) ? line : -1;
 				}
 
 				public List<RoadThing> getNearby(Node node) {
@@ -103,6 +116,12 @@ public abstract class Holder {
 								double lat = node.getLat();
 								int row = findRow(lon);
 								int line = findLine(lat);
+								if(row < 0 || line < 0) {
+												System.err.println("Can't find nearby things: node isn't in rect. Node " +
+																				node.getId() +" : (" +
+																				node.getLon() + ", " + node.getLat() + ")");
+												return null;
+								}
 								List<RoadThing> list = new LinkedList<>();
 								for (RoadThing thing: table.get(row).get(line)) {
 												list.add(thing);

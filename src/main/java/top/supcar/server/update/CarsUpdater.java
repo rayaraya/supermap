@@ -24,21 +24,18 @@ public class CarsUpdater {
 				public void update() {
 
 								CarHolder carHolder = sessionObjects.getCarHolder();
+								List<Car> cars = carHolder.getCars();
 
-								RoadThing thing;
-								Iterator holderIt = carHolder.iterator();
+						//		System.out.println( carHolder.getCars());
 
-								while(holderIt.hasNext()) {
-
-											thing = ((RoadThing)holderIt.next());
-
-											if(thing.getType().equals("C")) {
-															((Car)thing).updatePos();
-															carHolder.updatePosition(((Car)thing));
-											}
-
+								for (Car car: cars) {
+												car.updatePos();
+												carHolder.updatePosition(car);
+											//	System.out.println( carHolder.getCars());
 								}
 
+
+								sessionObjects.getCarSetter().maintain();
 
 				}
 }

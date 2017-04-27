@@ -1,11 +1,14 @@
-package top.supcar.server.model;
+package top.supcar.server.model.creation;
 
 import info.pavie.basicosmparser.model.Node;
 import top.supcar.server.SessionObjects;
 import top.supcar.server.graph.Distance;
 import top.supcar.server.graph.Graph;
 import top.supcar.server.holder.CarHolder;
-import top.supcar.server.holder.Holder;
+import top.supcar.server.model.CityCar;
+import top.supcar.server.model.Driver;
+import top.supcar.server.model.ModelConstants;
+import top.supcar.server.model.creation.CarFactory;
 
 import java.util.List;
 
@@ -28,7 +31,10 @@ public class CityCarFactory implements CarFactory {
 								CarHolder carHolder = sessionObjects.getCarHolder();
 								Driver driver = new Driver();
 								double angle = 0;
+								double maxAcc;
 								List<Node> route = graph.getWay(start, destination);
+								if(route == null)
+												return null;
 
 
 								if(route.get(1) != null && route.get(0) != null) {
@@ -43,11 +49,11 @@ public class CityCarFactory implements CarFactory {
 																angle *= -1;
 								}
 
-								CityCar car = new CityCar(sessionObjects, route, driver, ModelConstants
-												.CITY_CAR_DEF_SPEED, angle);
+								maxAcc = ModelConstants.CITY_CAR_DEF_MAX_ACC;
+								maxAcc += (Math.random() - 0.5)*maxAcc;
+								CityCar car = new CityCar(sessionObjects, route, driver, maxAcc, angle);
 
 								carHolder.updatePosition(car);
-								car.setToNextNode(distance.distanceBetween(route.get(0), route.get(1)));
 
 								return car;
 

@@ -13,7 +13,7 @@ import java.util.List;
 public class CityCar extends Car {
 
 				public CityCar(SessionObjects sessionObjects, List<Node> route, Driver driver,
-				               double speed,
+				               double maxAcc,
 				               double orientation) {
 								this.routeList = route;
 								this.speed = speed;
@@ -30,12 +30,13 @@ public class CityCar extends Car {
 
 							//	System.out.println("Citycar, routearr: " + routeArray);
 
-								this.maxAcc = ModelConstants.CITY_CAR_DEF_MAX_ACC;
+								this.maxAcc = maxAcc;
 								this.driver = driver;
 								driver.setCar(this);
 								type = "C";
-								pos = routeArray.get(0);
-
+								pos = new Node(0, route.get(0).getLat(), route.get(0).getLon());
+								toNextNode = sessionObjects.getDistance().distanceBetween(routeArray.get(0),
+																routeArray.get(1));
 
 				}
 

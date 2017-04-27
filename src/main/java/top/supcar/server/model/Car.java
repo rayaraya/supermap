@@ -46,8 +46,6 @@ public abstract class Car extends RoadThing {
 								ratio = currStep / distance.distanceBetween(prev, next);
 								dy = distance.latDegToMeters(next.getLat() - prev.getLat()) * ratio;
 								dx = distance.lonDegToMeters(next.getLon() - prev.getLon()) * ratio;
-						//		System.out.println(prev + " " + next + "toNextNode: " + toNextNode);
-							//	System.out.println("currste: " + currStep + " dx: " + dx + " dxdy " + dy);
 								pos.setLat(pos.getLat() + distance.metersToLatDeg(dy));
 								pos.setLon(pos.getLon() + distance.metersToLonDeg(dx));
 								toNextNode -= currStep;
@@ -58,10 +56,6 @@ public abstract class Car extends RoadThing {
 				}
 				public void setCurrStep(double currStep) {
 								this.currStep = currStep;
-				}
-
-				void setToNextNode(double toNextNode) {
-								this.toNextNode = toNextNode;
 				}
 
 				public double getSpeed() {

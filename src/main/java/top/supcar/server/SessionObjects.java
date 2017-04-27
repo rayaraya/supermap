@@ -1,10 +1,10 @@
 package top.supcar.server;
 
+import java.time.Instant;
 import top.supcar.server.graph.Distance;
 import top.supcar.server.graph.Graph;
 import top.supcar.server.holder.CarHolder;
-import top.supcar.server.holder.Holder;
-import top.supcar.server.model.CityCarFactory;
+import top.supcar.server.model.creation.CarSetter;
 import top.supcar.server.physics.Physics;
 import top.supcar.server.update.CarsUpdater;
 import top.supcar.server.update.WorldUpdater;
@@ -20,11 +20,11 @@ public class SessionObjects {
 				private CarsUpdater carsUpdater;
 				private WorldUpdater worldUpdater;
 				private Graph graph;
-				private CityCarFactory cityCarFactory;
+				private CarSetter carSetter;
+				private Instant currInstant;
 
-
-				public void setCityCarFactory(CityCarFactory cityCarFactory) {
-								this.cityCarFactory = cityCarFactory;
+				public void setCurrInstant(Instant currInstant) {
+								this.currInstant = currInstant;
 				}
 
 				public void setCarsUpdater(CarsUpdater carsUpdater) {
@@ -55,6 +55,9 @@ public class SessionObjects {
 								this.selectedRect = selectedRect;
 				}
 
+				public void setCarSetter(CarSetter carSetter) {
+								this.carSetter = carSetter;
+				}
 
 				public WorldUpdater getWorldUpdater() {
 								return worldUpdater;
@@ -84,7 +87,12 @@ public class SessionObjects {
 								return graph;
 				}
 
-				public CityCarFactory getCityCarFactory() {
-								return cityCarFactory;
+				public Instant getCurrInstant() {
+								return currInstant;
+				}
+
+				public CarSetter getCarSetter() {
+								return carSetter;
 				}
 }
+

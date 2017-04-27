@@ -20,37 +20,25 @@ public class CarHolder extends Holder {
 
 				public void updatePosition(Car car) {
 								SelectedRect selectedRect = sessionObjects.getSelectedRect();
+								//System.out.println("srect urlat: " + selectedRect.getUpperRight().getLat());
 								double lon = car.getPos().getLon();
 								double lat = car.getPos().getLat();
-								int row, line;
+								int row = findRow(lon), line = findLine(lat);
 								int[] posInTable;
 
-								if(!adresses.containsKey(car)) {
-												putCar(car, findRow(lon), findLine(lat));
-								}
-								else {
-												double upperRightLon = selectedRect.getUpperRight().getLon();
-												double upperRightLat = selectedRect.getUpperRight().getLat();
-												double lowerLeftLon = selectedRect.getLowerLeft().getLon();
-												double lowerLeftLat = selectedRect.getLowerLeft().getLat();
-												if(lon >= upperRightLon || lat >= upperRightLat || lon <= lowerLeftLon ||
-																				lat <= lowerLeftLat) {
+								if(adresses.containsKey(car)) {
+												posInTable = adresses.get(car);
+										//		System.out.println("row: " + row + " line: " + line + " pos0 " +posInTable[0] + " pos1 " + posInTable[1]);
+												if(row != posInTable[0] ||  line != posInTable[1]) {
 																removeCar(car);
-												}
-												else {
-																row = findRow(lon);
-																line = findLine(lat);
-																posInTable = adresses.get(car);
-																if(row != posInTable[0] ||  line != posInTable[1]) {
-																				removeCar(car);
+															//	System.out.println("remove");
+																if(row > -1 && line > -1)
 																				putCar(car, row, line);
-																				dump();																}
-
+															//	dump();
 												}
-
+								} else if(row > -1 && line > -1) {
+												putCar(car, row, line);
 								}
-
-
 				}
 
 				private void removeCar(Car car) {
@@ -95,10 +83,9 @@ public class CarHolder extends Holder {
 								int index = cell.indexOf(car);
 
 								if (index < 0) {
-												System.out.println("!!! error occurred while removing car: car didn't " +
+												System.err.println("error occurred while removing car: car didn't " +
 																				"found " +
-																				"in cell (" + row + " , " + line + ")" +
-																				" !!! ");
+																				"in cell (" + row + " , " + line + ")");
 								} else {
 												cell.remove(index);
 												adresses.remove(car);
@@ -114,12 +101,17 @@ public class CarHolder extends Holder {
 								int[] posInTable = new int[2];
 								posInTable[0] = row;
 								posInTable[1] = line;
-								System.out.println("put car in row: " + row + " line: " + line);
+								//System.out.println("put car in row: " + row + " line: " + line);
 
 								adresses.put(car, posInTable);
 								table.get(row).get(line).add(car);
 
-								System.out.println("car placed at: " + row + " " + line);
+								/*System.out.println(car +" ( " + car.getPos().getLon() + ", " + car.getPos()
+																.getLat() + ") "  +
+																" " +
+																"placed at: " +	row
+																+ " " +
+																line);*/
 				}
 
 				public ArrayList<Car> getCars(){

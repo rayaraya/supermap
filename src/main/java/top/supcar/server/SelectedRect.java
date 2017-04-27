@@ -22,4 +22,14 @@ public class SelectedRect {
 				public Node getLowerLeft() {
 								return lowerLeft;
 				}
+
+				public boolean inRectangle(Node node) {
+
+								if(node.getLon() <= upperRight.getLon() && node.getLon() >= lowerLeft.getLon() &&
+																node.getLat() <= upperRight.getLat() && node.getLat() >= lowerLeft.getLat())
+												return true;
+								else
+												return false;
+
+				}
 }

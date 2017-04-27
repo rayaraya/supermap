@@ -9,13 +9,13 @@ import top.supcar.server.graph.Graph;
 import top.supcar.server.holder.CarHolder;
 import top.supcar.server.model.Car;
 import top.supcar.server.model.CityCar;
-import top.supcar.server.model.CityCarFactory;
+import top.supcar.server.model.creation.CarSetter;
+import top.supcar.server.model.creation.CityCarFactory;
 import top.supcar.server.parse.OSMData;
 import top.supcar.server.physics.Physics;
 import top.supcar.server.update.CarsUpdater;
 import top.supcar.server.update.WorldUpdater;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -35,8 +35,8 @@ public class ClientProcessor {
 				public void prepare() {
 								String url = "http://www.overpass-api.de/api/xapi?way[bbox=30.258916543827283,59.917968282222404,30.34371726404213,59.94531882096226]";
 
-								Node ll = new Node(0, 59.94480136, 30.252207);
-								Node ur = new Node(0, 59.94965, 30.2636247);
+								Node ll = new Node(0, 59.9179682, 30.258916);
+								Node ur = new Node(0, 59.945318820, 30.343717);
 
 								sessionObjects = new SessionObjects();
 								SelectedRect selectedRect = new SelectedRect(ll, ur);
@@ -49,7 +49,7 @@ public class ClientProcessor {
 								sessionObjects.setDistance(distance);
 
 								Map<String, Way> roads;
-								OSMData data = new OSMData(url);
+								OSMData data = new OSMData(url, sessionObjects);
 								//data.loadData();
 								data.makeMap();
 								roads = data.getMap();
@@ -62,8 +62,8 @@ public class ClientProcessor {
 								CarHolder carHolder = new CarHolder(sessionObjects, 100);
 								sessionObjects.setCarHolder(carHolder);
 
-								CityCarFactory ccFactory = new CityCarFactory(sessionObjects);
-								sessionObjects.setCityCarFactory(ccFactory);
+								CarSetter cSetter = new CarSetter(sessionObjects, 1);
+								sessionObjects.setCarSetter(cSetter);
 
 								CarsUpdater carsUpdater = new CarsUpdater(sessionObjects);
 
@@ -75,17 +75,14 @@ public class ClientProcessor {
 
 				public void go() {
 								WorldUpdater worldUpdater = sessionObjects.getWorldUpdater();
-								CityCarFactory ccFactory = new CityCarFactory(sessionObjects);
 								SelectedRect selectedRect = sessionObjects.getSelectedRect();
-								CityCar corolla = ccFactory.createCar(selectedRect.getLowerLeft(), selectedRect
-																.getUpperRight());
 								while (true) {
 												worldUpdater.update();
 												try {
 																sendJson();
 																//session.getRemote().sendString(lat + " " + lon;
-																Thread.sleep(100);
-												} catch (Exception e) {System.out.println("caught exception");}
+																Thread.sleep(20);
+												} catch (Exception e) {System.err.println("caught exception");}
 								}
 
 				}
@@ -93,17 +90,21 @@ public class ClientProcessor {
 				private void sendJson() {
 								ArrayList<double[]> carsCoordinates = new ArrayList<>();
 								ArrayList<Car> cars = sessionObjects.getCarHolder().getCars();
+
+								//System.out.println("num of cars: " + cars.size());
+
 								for (Car car : cars) {
 												double[] coordinates = {car.getPos().getLon(), car.getPos().getLat()};
 												carsCoordinates.add(coordinates);
+								}
 												try {
 																String point = gson.toJson(carsCoordinates);
-																session.getRemote().sendString(point);
+															//	session.getRemote().sendString(point);
 												} catch (Exception e) {
 																e.printStackTrace();
 												}
 
-								}
+
 				}
 }
 
