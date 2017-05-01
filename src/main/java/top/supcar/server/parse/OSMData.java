@@ -3,6 +3,8 @@ package top.supcar.server.parse;
 import info.pavie.basicosmparser.controller.*;
 import info.pavie.basicosmparser.model.*;
 import org.xml.sax.SAXException;
+import top.supcar.server.SessionObjects;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -17,9 +19,11 @@ public class OSMData {
     private Map<String,Element> map;
     private Map<String,Way> siftedMap = new HashMap<String,Way>();
     private String apiURL;
+    private SessionObjects sessionObjects;
 
-    public OSMData(String apiURL) {
+    public OSMData(String apiURL, SessionObjects sessionObjects) {
         this.apiURL = apiURL;
+        this.sessionObjects = sessionObjects;
         filepath = setPath();
     }
 
@@ -55,6 +59,8 @@ public class OSMData {
         Element val;
         Way temp;
 
+        List<Node> nodes;
+
         while (it.hasNext()) {
             Map.Entry entry = (Map.Entry) it.next();
             key = (String) entry.getKey();
@@ -87,6 +93,23 @@ public class OSMData {
             else
                 it.remove();
         }
+
+        Iterator<Map.Entry<String, Way>> iter = siftedMap.entrySet().iterator();
+        Node node;
+        while(iter.hasNext()) {
+            //System.out.println("next");
+            nodes = iter.next().getValue().getNodes();
+            Iterator<Node> nodesIter = nodes.iterator();
+            while(nodesIter.hasNext()) {
+                node = nodesIter.next();
+                if(!sessionObjects.getSelectedRect().inRectangle(node)) {
+                    nodesIter.remove();
+                    //System.out.println("removed node " + node.getLon() + " " + node.getLat());
+
+                }
+            }
+        }
+
         map = null;
     }
     public void printSmap(){

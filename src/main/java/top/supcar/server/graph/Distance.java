@@ -3,6 +3,7 @@ package top.supcar.server.graph;
 import info.pavie.basicosmparser.model.Element;
 import info.pavie.basicosmparser.model.Node;
 import info.pavie.basicosmparser.model.Way;
+import top.supcar.server.SelectedRect;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -10,30 +11,63 @@ import java.util.List;
 import java.util.Map;
 
 /**
-	* Created by 1 on 12.04.2017.
-	*/
+ * Operations with coordinates and distances
+ *
+ */
 public class Distance {
-				private static final double R = 6371000; // Earth's radius
-				private static final double TRANS = Math.PI/180;
-				/**
-					* @return distance in meters
-					*/
-				private static double distanceBetween(Node a, Node b) {
 
-								double lat1 = a.getLat()*TRANS;
-								double lat2 = b.getLat()*TRANS;
-								double dlat = lat2 - lat1;
-								double dlon = (b.getLon()- a.getLon())*TRANS;
 
-								double x = Math.sin(dlat/2) * Math.sin(dlat/2) +
-												Math.cos(lat1) * Math.cos(lat2) *
-																Math.sin(dlon/2) * Math.sin(dlon/2);
-								double c = 2 * Math.atan2(Math.sqrt(x), Math.sqrt(1-x));
 
-								double d = R * c;
-								return  d;
-				}
+	private double metersPerDegLat;
+	private double metersPerDegLon;
 
+	public Distance(SelectedRect selectedRect) {
+
+		Node x0y0 = new Node(0, selectedRect.getLowerLeft().getLat(), selectedRect
+				.getLowerLeft().getLon());
+		Node x1y0 = new Node(0, selectedRect.getUpperRight().getLat(), selectedRect
+				.getLowerLeft().getLon());
+
+		Node x0y1 = new Node(0, selectedRect.getLowerLeft().getLat(), selectedRect
+				.getUpperRight().getLon());
+
+		metersPerDegLat = distanceBetween(x0y0, x1y0)/(x1y0.getLat() - x0y0.getLat());
+		metersPerDegLon = distanceBetween(x0y0, x0y1)/(x0y1.getLon() - x0y0.getLon());
+	}
+	/**
+	 * @return distance in meters
+	 */
+	public double distanceBetween(Node a, Node b) {
+		double R = 6371000; // Earth's radius
+		double TRANS = Math.PI/180;
+
+		double lat1 = a.getLat()*TRANS;
+		double lat2 = b.getLat()*TRANS;
+		double dlat = lat2 - lat1;
+		double dlon = (b.getLon()- a.getLon())*TRANS;
+
+		double x = Math.sin(dlat/2) * Math.sin(dlat/2) +
+				Math.cos(lat1) * Math.cos(lat2) *
+						Math.sin(dlon/2) * Math.sin(dlon/2);
+		double c = 2 * Math.atan2(Math.sqrt(x), Math.sqrt(1-x));
+
+		double d = R * c;
+		return  d;
+	}
+
+	public double latDegToMeters(double deg) {
+		return deg*metersPerDegLat;
+	}
+	public double lonDegToMeters(double deg) {
+		return deg*metersPerDegLon;
+	}
+	public double metersToLatDeg(double meters) {
+		return meters/metersPerDegLat;
+	}
+	public double metersToLonDeg(double meters) {
+		return meters/metersPerDegLon;
+	}
+				/*
 				/**
 					*
 					* For each pair Way, Node
@@ -44,7 +78,7 @@ public class Distance {
 					* @return  Map with concatenation (WayId+NodeId) as key and way length in meters
 					* as value
 					*/
-
+/*
 				public static Map< String, Double> setMilestones(Map<String,Way> roads) {
 
 								Map< String, Double> milestones = new HashMap< String, Double>();
@@ -91,5 +125,5 @@ public class Distance {
 
 								return milestones;
 				}
-
+*/
 }
