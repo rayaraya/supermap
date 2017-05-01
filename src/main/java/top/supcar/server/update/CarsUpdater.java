@@ -10,32 +10,32 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
-	* Created by 1 on 19.04.2017.
-	*/
+ * Created by 1 on 19.04.2017.
+ */
 public class CarsUpdater {
 
-				private SessionObjects sessionObjects;
+	private SessionObjects sessionObjects;
 
-				public CarsUpdater(SessionObjects sessionObjects) {
-								this.sessionObjects = sessionObjects;
-				}
-
-
-				public void update() {
-
-								CarHolder carHolder = sessionObjects.getCarHolder();
-								List<Car> cars = carHolder.getCars();
-
-						//		System.out.println( carHolder.getCars());
-
-								for (Car car: cars) {
-												car.updatePos();
-												carHolder.updatePosition(car);
-											//	System.out.println( carHolder.getCars());
-								}
+	public CarsUpdater(SessionObjects sessionObjects) {
+		this.sessionObjects = sessionObjects;
+	}
 
 
-								sessionObjects.getCarSetter().maintain();
+	public void update() {
 
-				}
+		CarHolder carHolder = sessionObjects.getCarHolder();
+		List<Car> cars = carHolder.getCars();
+
+		//		System.out.println( carHolder.getCars());
+
+		for (Car car: cars) {
+			car.updatePos();
+			carHolder.updatePosition(car);
+			//	System.out.println( carHolder.getCars());
+		}
+
+
+		sessionObjects.getCarSetter().maintain();
+
+	}
 }

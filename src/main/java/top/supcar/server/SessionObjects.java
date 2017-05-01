@@ -4,95 +4,105 @@ import java.time.Instant;
 import top.supcar.server.graph.Distance;
 import top.supcar.server.graph.Graph;
 import top.supcar.server.holder.CarHolder;
+import top.supcar.server.holder.TLKunteynir;
 import top.supcar.server.model.creation.CarSetter;
 import top.supcar.server.physics.Physics;
 import top.supcar.server.update.CarsUpdater;
 import top.supcar.server.update.WorldUpdater;
 
 /**
-	* Created by 1 on 24.04.2017.
-	*/
+ * Created by 1 on 24.04.2017.
+ */
 public class SessionObjects {
-				private CarHolder carHolder;
-				private SelectedRect selectedRect;
-				private Physics physics;
-				private Distance distance;
-				private CarsUpdater carsUpdater;
-				private WorldUpdater worldUpdater;
-				private Graph graph;
-				private CarSetter carSetter;
-				private Instant currInstant;
+	private CarHolder carHolder;
+	private SelectedRect selectedRect;
+	private Physics physics;
+	private Distance distance;
+	private CarsUpdater carsUpdater;
+	private WorldUpdater worldUpdater;
+	private Graph graph;
+	private CarSetter carSetter;
+	private Instant currInstant;
+	private TLKunteynir tlKunteynir;
 
-				public void setCurrInstant(Instant currInstant) {
-								this.currInstant = currInstant;
-				}
+	public void setTlKunteynir(TLKunteynir tlKunteynir) {
+		this.tlKunteynir = tlKunteynir;
+	}
 
-				public void setCarsUpdater(CarsUpdater carsUpdater) {
-								this.carsUpdater = carsUpdater;
-				}
+	public void setCurrInstant(Instant currInstant) {
+		this.currInstant = currInstant;
+	}
 
-				public void setGraph(Graph graph) {
-								this.graph = graph;
-				}
+	public void setCarsUpdater(CarsUpdater carsUpdater) {
+		this.carsUpdater = carsUpdater;
+	}
 
-				public void setWorldUpdater(WorldUpdater worldUpdater) {
-								this.worldUpdater = worldUpdater;
-				}
+	public void setGraph(Graph graph) {
+		this.graph = graph;
+	}
 
-				public void setDistance(Distance distance) {
-								this.distance = distance;
-				}
+	public void setWorldUpdater(WorldUpdater worldUpdater) {
+		this.worldUpdater = worldUpdater;
+	}
 
-				public void setCarHolder(CarHolder carHolder) {
-								this.carHolder = carHolder;
-				}
+	public void setDistance(Distance distance) {
+		this.distance = distance;
+	}
 
-				public void setPhysics(Physics physics) {
-								this.physics = physics;
-				}
+	public void setCarHolder(CarHolder carHolder) {
+		this.carHolder = carHolder;
+	}
 
-				public void setSelectedRect(SelectedRect selectedRect) {
-								this.selectedRect = selectedRect;
-				}
+	public void setPhysics(Physics physics) {
+		this.physics = physics;
+	}
 
-				public void setCarSetter(CarSetter carSetter) {
-								this.carSetter = carSetter;
-				}
+	public void setSelectedRect(SelectedRect selectedRect) {
+		this.selectedRect = selectedRect;
+	}
 
-				public WorldUpdater getWorldUpdater() {
-								return worldUpdater;
-				}
+	public void setCarSetter(CarSetter carSetter) {
+		this.carSetter = carSetter;
+	}
 
-				public CarsUpdater getCarsUpdater() {
-								return carsUpdater;
-				}
+	public WorldUpdater getWorldUpdater() {
+		return worldUpdater;
+	}
 
-				public Distance getDistance() {
-								return distance;
-				}
+	public CarsUpdater getCarsUpdater() {
+		return carsUpdater;
+	}
 
-				public CarHolder getCarHolder() {
-								return carHolder;
-				}
+	public Distance getDistance() {
+		return distance;
+	}
 
-				public Physics getPhysics() {
-								return physics;
-				}
+	public CarHolder getCarHolder() {
+		return carHolder;
+	}
 
-				public SelectedRect getSelectedRect() {
-								return selectedRect;
-				}
+	public Physics getPhysics() {
+		return physics;
+	}
 
-				public Graph getGraph() {
-								return graph;
-				}
+	public SelectedRect getSelectedRect() {
+		return selectedRect;
+	}
 
-				public Instant getCurrInstant() {
-								return currInstant;
-				}
+	public Graph getGraph() {
+		return graph;
+	}
 
-				public CarSetter getCarSetter() {
-								return carSetter;
-				}
+	public Instant getCurrInstant() {
+		return currInstant;
+	}
+
+	public CarSetter getCarSetter() {
+		return carSetter;
+	}
+
+	public TLKunteynir getTlKunteynir() {
+		return tlKunteynir;
+	}
 }
 

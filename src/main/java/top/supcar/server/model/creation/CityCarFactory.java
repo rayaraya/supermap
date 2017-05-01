@@ -13,49 +13,49 @@ import top.supcar.server.model.creation.CarFactory;
 import java.util.List;
 
 /**
-	* Created by 1 on 19.04.2017.
-	*/
+ * Created by 1 on 19.04.2017.
+ */
 public class CityCarFactory implements CarFactory {
 
-				SessionObjects sessionObjects;
+	SessionObjects sessionObjects;
 
-				public CityCarFactory(SessionObjects sessionObjects) {
-								this.sessionObjects = sessionObjects;
-				}
+	public CityCarFactory(SessionObjects sessionObjects) {
+		this.sessionObjects = sessionObjects;
+	}
 
-				@Override
-				public CityCar createCar(Node start, Node destination) {
+	@Override
+	public CityCar createCar(Node start, Node destination) {
 
-								Graph graph = sessionObjects.getGraph();
-								Distance distance = sessionObjects.getDistance();
-								CarHolder carHolder = sessionObjects.getCarHolder();
-								Driver driver = new Driver();
-								double angle = 0;
-								double maxAcc;
-								List<Node> route = graph.getWay(start, destination);
-								if(route == null)
-												return null;
+		Graph graph = sessionObjects.getGraph();
+		Distance distance = sessionObjects.getDistance();
+		CarHolder carHolder = sessionObjects.getCarHolder();
+		Driver driver = new Driver();
+		double angle = 0;
+		double maxAcc;
+		List<Node> route = graph.getWay(start, destination);
+		if(route == null)
+			return null;
 
 
-								if(route.get(1) != null && route.get(0) != null) {
-												double dx = distance.latDegToMeters(route.get(1).getLat() - route.get(0)
-																.getLat());
-												double dy = distance.lonDegToMeters(route.get(1).getLon() - route.get(0)
-																.getLon());
+		if(route.get(1) != null && route.get(0) != null) {
+			double dx = distance.latDegToMeters(route.get(1).getLat() - route.get(0)
+					.getLat());
+			double dy = distance.lonDegToMeters(route.get(1).getLon() - route.get(0)
+					.getLon());
 
-												angle = Math.acos(dx/Math.sqrt(dx*dx+dy*dy));
+			angle = Math.acos(dx/Math.sqrt(dx*dx+dy*dy));
 
-												if(dy < 0)
-																angle *= -1;
-								}
+			if(dy < 0)
+				angle *= -1;
+		}
 
-								maxAcc = ModelConstants.CITY_CAR_DEF_MAX_ACC;
-								maxAcc += (Math.random() - 0.5)*maxAcc;
-								CityCar car = new CityCar(sessionObjects, route, driver, maxAcc, angle);
+		maxAcc = ModelConstants.CITY_CAR_DEF_MAX_ACC;
+		maxAcc += (Math.random() - 0.5)*maxAcc;
+		CityCar car = new CityCar(sessionObjects, route, driver, maxAcc, angle);
 
-								carHolder.updatePosition(car);
+		carHolder.updatePosition(car);
 
-								return car;
+		return car;
 
-				}
+	}
 }
