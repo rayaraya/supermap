@@ -66,4 +66,8 @@ public abstract class Car extends RoadThing {
 	public List<Node> getRouteList() {
 		return routeList;
 	}
+
+    public int getPrevNodeIndex() {
+        return prevNodeIndex;
+    }
 }

@@ -1,5 +1,6 @@
 package top.supcar.server.holder;
 
+import info.pavie.basicosmparser.model.Node;
 import top.supcar.server.SelectedRect;
 import top.supcar.server.SessionObjects;
 import top.supcar.server.model.Car;
@@ -39,9 +40,12 @@ public class CarHolder extends Holder {
 		} else if(row > -1 && line > -1) {
 			putCar(car, row, line);
 		}
+		List<Node> routelist = car.getRouteList();
+		if((routelist.size() - 1) == car.getPrevNodeIndex())
+		    removeCar(car);
 	}
 
-	private void removeCar(Car car) {
+	public void removeCar(Car car) {
 								/*SelectedRect selectedRect = sessionObjects.getSelectedRect();
 								double lon = car.getPos().getLon();
 								double lat = car.getPos().getLat();
@@ -124,15 +128,6 @@ public class CarHolder extends Holder {
 		return list;
 
 	}
-
-
-
-
-
-
-
-
-
 
 
 }

@@ -102,25 +102,23 @@ public class Dijkstra {
     }
 
     public List<Node> getWay(Node start, Node end) {
-        System.out.println("started getting way");
         dijkstra(start);
         notWay.clear();
         way.clear();
 
         notWay.add(end);
 
-        if(p.get(end) == null)
+        if(p.get(end) == null) {
             return null;
+        }
 
         while (end != start) {
             end = p.get(end);
             notWay.add(end);
-            System.out.println("notway size: " + notWay.size());
         }
         for (int i = notWay.size() - 1; i >= 0; i--) {
             way.add(notWay.get(i));
         }
-        System.out.println("ended getting way");
 
         if (way.size() == 0)
             return null;

@@ -112,13 +112,18 @@ public class CarSetter {
         List<Node> nodes = sessionObjects.getGraph().getVertexList();
 
         int i = 0;
-        int cars = 100;
+        int cars = 10;
         int sinksSize = sinks.size();
+        Node sink;
 
         for (Node nd : nodes) {
+            sink = nd;
             if (i >= cars)
                 break;
             if(Math.random() <= initSpawnProbability) {
+                for(int j = 0; j < 10 && sink == nd; j++) {
+                    sink = sinks.get((int) Math.random() * sinksSize);
+                }
                 if (ccFactory.createCar(nd, sinks.get((int) Math.random() * sinksSize)) != null) {
                     i++;
                     System.out.println(i);
@@ -143,24 +148,30 @@ public class CarSetter {
         Car cr = null;
         List<RoadThing> nearbyList;
         if(lastInstant == null) {
-            lastInstant = sessionObjects.getCurrInstant();
+            lastInstant = Instant.now();
+            System.out.println("li " + lastInstant);
             lastTimeQuant = WorldUpdater.FIRST_QUANT;
         }
         else {
             instant = Instant.now();
-            lastTimeQuant = Duration.between(lastInstant,instant).toMillis()/1000;
+            lastTimeQuant = Duration.between(lastInstant,instant).toMillis();
+            lastTimeQuant /= 1000;
+            System.out.println("lasttq: " + lastTimeQuant + " duration: " +  Duration.between(lastInstant,instant).toMillis());
             lastInstant = instant;
         }
 
         for(int i = 0; i < sources.size(); i++) {
             currSource = sources.get(i);
+            System.out.println("lasttimeq: " + lastTimeQuant);
 
             timePassed.set(i, timePassed.get(i) + lastTimeQuant);
+            System.out.println("!carArrived: " + i + " timePassed: " + timePassed.get(i) + " period: " + periodes.get(i));
             if (timePassed.get(i) >= periodes.get(i)) {
                 carArrived.set(i, false);
                 timePassed.set(i, 0.0);
             }
             if (!carArrived.get(i)) {
+                System.out.println("!carArrived: " + i + " timePassed: " + timePassed.get(i) + " period: " + periodes.get(i));
                 spawnProbability = lastTimeQuant/(periodes.get(i) - timePassed.get(i));
                 if (Math.random() <= spawnProbability) {
                     nearbyList = holder.getNearby(currSource);
