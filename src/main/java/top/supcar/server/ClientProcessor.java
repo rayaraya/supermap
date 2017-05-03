@@ -33,6 +33,7 @@ public class ClientProcessor {
 	}
 
 	public void prepare() {
+
 		String url = "http://www.overpass-api.de/api/xapi?way[bbox=30.258916543827283,59.917968282222404,30.34371726404213,59.94531882096226]";
 
 		Node ll = new Node(0, 59.9179682, 30.258916);

@@ -21,30 +21,30 @@ public class TrafficLightSetter {
 		this.sessionObjects = sessionObjects;
 	}
 
-		/*		public void setTLs() {
-								Graph graph = sessionObjects.getGraph();
-								Map<String, Way> map = graph.getInterMap();
-								Iterator<Map.Entry<String, Way>> it = map.entrySet().iterator();
-								List<Node> road;
-								TLKunteynir tlKunteynir =  sessionObjects.getTlKunteynir();
-								double defPeriod =  CreationConstants.DEF_TL_PERIOD;
-								double period;
-								while(it.hasNext()) {
-												road = it.next().getValue().getNodes();
-												for (Node nd: road) {
-																if(nd.getTags().get("highway") == "traffic_signals") {
-																				if(tlKunteynir.getTL(nd) == null) {
-																								period = defPeriod + (int)((Math.random() - 0.5)*defPeriod/2);
-																								TrafficLight tl = new TrafficLight(nd, period);
-																								tlKunteynir.addTL();
-																				}
-																}
-												}
+	public void setTLs() {
+		Graph graph = sessionObjects.getGraph();
+		Map<String, Way> map = graph.getInterMap();
+		Iterator<Map.Entry<String, Way>> it = map.entrySet().iterator();
+		TLKunteynir tlKunteynir =  sessionObjects.getTlKunteynir();
+		double defPeriod =  CreationConstants.DEF_TL_PERIOD;
+		double period;
+		/*
+
+				if(nd.getTags().get("highway") == "traffic_signals") {
+					if(tlKunteynir.getTL(nd) == null) {
+						period = defPeriod + (int)((Math.random() - 0.5)*defPeriod/2);
+						TrafficLight tl = new TrafficLight(nd, period);
+						tlKunteynir.addTL(nd, tl);
 
 
-
-								}
-
+					}
 				}
-				*/
+			}*/
+
+
+
+
+
+	}
+
 }

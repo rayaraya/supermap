@@ -28,6 +28,10 @@ public class TrafficLight {
 		return this.directions;
 	}
 
+	public void addDirection(Node direction) {
+		directions.add(direction);
+	}
+
 
 
 }
