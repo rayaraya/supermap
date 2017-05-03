@@ -21,9 +21,8 @@ public class WSocket {
         //System.out.println("Connect: " + session.getRemoteAddress().getAddress());
         try {
             this.session = session;
-            //session.getRemote().sendString("helloo!");
             clientProcessor = new ClientProcessor(session);
-            clientProcessor.prepare();
+            //clientProcessor.prepare();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -31,9 +30,9 @@ public class WSocket {
 
     @OnWebSocketMessage
     public void onText(String message) {
-        //System.out.println("message: " + message);
+        System.out.println("message: " + message);
         try {
-          clientProcessor.go();
+          clientProcessor.handleMsg(message);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -41,6 +40,7 @@ public class WSocket {
 
     @OnWebSocketClose
     public void onClose(int statusCode, String reason) {
-        //System.out.println("Close: statusCode=" + statusCode + ", reason=" + reason);
+        System.out.println("Close: statusCode=" + statusCode + ", reason=" + reason);
+        clientProcessor.stop();
     }
 }

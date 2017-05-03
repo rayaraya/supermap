@@ -8,9 +8,7 @@ import top.supcar.server.graph.Distance;
 import top.supcar.server.graph.Graph;
 import top.supcar.server.holder.CarHolder;
 import top.supcar.server.model.Car;
-import top.supcar.server.model.CityCar;
 import top.supcar.server.model.creation.CarSetter;
-import top.supcar.server.model.creation.CityCarFactory;
 import top.supcar.server.parse.OSMData;
 import top.supcar.server.physics.Physics;
 import top.supcar.server.update.CarsUpdater;
@@ -26,17 +24,20 @@ public class ClientProcessor {
 	private SessionObjects sessionObjects;
 	private Session session;
 	private Gson gson;
+	private int runFlag;
+	private OSMData data;
 
 	public ClientProcessor(Session session) {
 		this.session = session;
 		this.gson = new Gson();
+		runFlag = 0;
 	}
 
-	public void prepare() {
-		String url = "http://www.overpass-api.de/api/xapi?way[bbox=30.258916543827283,59.917968282222404,30.34371726404213,59.94531882096226]";
-
-		Node ll = new Node(0, 59.9179682, 30.258916);
-		Node ur = new Node(0, 59.945318820, 30.343717);
+	private void prepare(Node ll, Node ur ) {
+		//String url = "http://www.overpass-api.de/api/xapi?way[bbox=30.258916543827283,59.917968282222404,30.34371726404213,59.94531882096226]";
+        String url = "http://www.overpass-api.de/api/xapi?way[bbox="+ll.getLon() +"," +ll.getLat()+","+ur.getLon()+","+ur.getLat()+"]";
+        //ll = new Node(0, 59.9179682, 30.258916);
+		// ur = new Node(0, 59.945318820, 30.343717);
 
 		sessionObjects = new SessionObjects();
 		SelectedRect selectedRect = new SelectedRect(ll, ur);
@@ -49,8 +50,8 @@ public class ClientProcessor {
 		sessionObjects.setDistance(distance);
 
 		Map<String, Way> roads;
-		OSMData data = new OSMData(url, sessionObjects);
-		//data.loadData();
+		data = new OSMData(url, sessionObjects);
+		data.loadData();
 		data.makeMap();
 		roads = data.getMap();
 		Graph graph = new Graph(roads);
@@ -67,23 +68,45 @@ public class ClientProcessor {
 		sessionObjects.setCarsUpdater(carsUpdater);
 		WorldUpdater worldUpdater = new WorldUpdater(sessionObjects);
 		sessionObjects.setWorldUpdater(worldUpdater);
-
+		runFlag = 1;
 	}
 
-	public void go() {
+	private void go() {
 		WorldUpdater worldUpdater = sessionObjects.getWorldUpdater();
-		SelectedRect selectedRect = sessionObjects.getSelectedRect();
-		while (true) {
+		while (runFlag == 1) {
 			worldUpdater.update();
 			try {
 				sendJson();
-				//session.getRemote().sendString(lat + " " + lon;
 				Thread.sleep(20);
 			} catch (Exception e) {System.err.println("caught exception");}
 		}
 
 	}
 
+	public void stop(){
+		runFlag = 0;
+		data.clear();
+	}
+
+	public void handleMsg (String message){
+
+        Map result = (Map) gson.fromJson(message, Object.class);
+        if(result.keySet().toArray()[0].equals("SelectedRect")){
+            String[] coordinates = result.get(result.keySet().toArray()[0]).toString().split(",");
+            Node ll = new Node(0, Double.parseDouble(coordinates[1]), Double.parseDouble(coordinates[0]));
+            Node ur = new Node(0, Double.parseDouble(coordinates[3]), Double.parseDouble(coordinates[2]));
+            this.prepare(ll, ur);
+            this.go();
+        }
+        /*if(result.keySet().toArray()[0].equals("button_msg")){
+            System.out.println("key: " +result.keySet().toArray()[0]);
+            String msg = (String)result.get(result.keySet().toArray()[0]);
+            System.out.println("msg " + msg);
+            if(msg.equals("close")){
+                stop();
+            }
+        }*/
+    }
 	private void sendJson() {
 		ArrayList<double[]> carsCoordinates = new ArrayList<>();
 		ArrayList<Car> cars = sessionObjects.getCarHolder().getCars();
@@ -100,7 +123,6 @@ public class ClientProcessor {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
 
 	}
 }
