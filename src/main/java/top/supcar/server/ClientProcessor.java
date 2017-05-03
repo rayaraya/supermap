@@ -53,11 +53,8 @@ public class ClientProcessor {
 		//data.loadData();
 		data.makeMap();
 		roads = data.getMap();
-		Graph graph = new Graph();
+		Graph graph = new Graph(roads);
 		sessionObjects.setGraph(graph);
-
-		graph.setInterMap(roads);
-		graph.setMap();
 
 		CarHolder carHolder = new CarHolder(sessionObjects, 100);
 		sessionObjects.setCarHolder(carHolder);
