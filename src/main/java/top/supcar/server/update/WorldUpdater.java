@@ -11,6 +11,7 @@ import java.time.Instant;
 public class WorldUpdater {
 	private double timeQuant = 0.01;
 	private SessionObjects sessionObjects;
+	public static final double FIRST_QUANT = 0.01;
 
 	private Instant lastInstant;
 
@@ -21,13 +22,13 @@ public class WorldUpdater {
 	public void update() {
 		Instant instant = Instant.now();
 		sessionObjects.setCurrInstant(instant);
-		long timeQuantMillis = 10;
+		long timeQuantMillis = (long)(1000*FIRST_QUANT);
 		if(lastInstant != null)
 			timeQuantMillis = Duration.between(lastInstant,instant).toMillis();
 		timeQuant = ((double)timeQuantMillis)/1000;
 		lastInstant = instant;
 		sessionObjects.getCarsUpdater().update();
-		System.out.println("TimeQuant : " + timeQuantMillis);
+		//System.out.println("TimeQuant : " + timeQuantMillis);
 	}
 
 	public double getTimeQuant() {

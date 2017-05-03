@@ -35,7 +35,7 @@ public class CarsUpdater {
 		}
 
 
-		sessionObjects.getCarSetter().maintain();
+		//sessionObjects.getCarSetter().maintain();
 
 	}
 }

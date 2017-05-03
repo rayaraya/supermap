@@ -28,8 +28,13 @@ public class TrafficLight {
 		return this.directions;
 	}
 
+	/**
+	 * adds direction, if isn't added before
+	 * @param direction
+	 */
 	public void addDirection(Node direction) {
-		directions.add(direction);
+		if(!directions.contains(direction))
+			directions.add(direction);
 	}
 
 

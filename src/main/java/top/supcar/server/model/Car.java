@@ -24,6 +24,7 @@ public abstract class Car extends RoadThing {
 	protected double currStep;
 	protected double toNextNode;
 	protected int prevNodeIndex = 0;
+	protected int line = 1;
 
 	public void updatePos() {
 		double requestedAcc = driver.pushPedal()*maxAcc;

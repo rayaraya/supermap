@@ -79,7 +79,7 @@ public class ClientProcessor {
 			try {
 				sendJson();
 				//session.getRemote().sendString(lat + " " + lon;
-				Thread.sleep(20);
+				Thread.sleep(70);
 			} catch (Exception e) {System.err.println("caught exception");}
 		}
 

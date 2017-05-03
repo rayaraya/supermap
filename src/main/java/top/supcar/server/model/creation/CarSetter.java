@@ -6,139 +6,253 @@ import top.supcar.server.SessionObjects;
 import top.supcar.server.graph.Distance;
 import top.supcar.server.holder.CarHolder;
 import top.supcar.server.model.Car;
+import top.supcar.server.model.ModelConstants;
 import top.supcar.server.model.RoadThing;
+import top.supcar.server.update.WorldUpdater;
 
+import java.sql.Time;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.*;
 
 /**
  * Created by 1 on 26.04.2017.
  */
 public class CarSetter {
-	private SessionObjects sessionObjects;
-	private CityCarFactory ccFactory;
-	private int busyLvl;
-	List<Node> sources;
-	List<Node> sinks;
+    private SessionObjects sessionObjects;
+    private CityCarFactory ccFactory;
+    private int busyLvl;
+    private List<Node> sources;
+    private List<Node> sinks;
+    private List<Double> periodes; //how often cars should arrive at each source
+    private Instant lastInstant;
+    private List<Double> timePassed;
+    private List<Boolean> carArrived;
 
-	public CarSetter(SessionObjects sessionObjects, int busyLvl) {
-		this.busyLvl = busyLvl;
-		this.sessionObjects = sessionObjects;
-		ccFactory = new CityCarFactory(sessionObjects);
-		findSrcsSinks();
-		setCars();
-	}
+    public CarSetter(SessionObjects sessionObjects, int busyLvl) {
+        this.busyLvl = busyLvl;
+        this.sessionObjects = sessionObjects;
+        ccFactory = new CityCarFactory(sessionObjects);
+        findSrcsSinks();
+        setCars();
+    }
 
-	/**
-	 * Помещает машины на карту в момент начала моделирования
-	 */
+    private void setPeriodes() {
+        if (sources == null || sinks == null) {
+            findSrcsSinks();
+        }
+        if (periodes == null) {
+            System.out.println(sources.size());
+            periodes = new ArrayList<>(sources.size());
+            for(int i = 0; i < sources.size(); i++) {
+                periodes.add(0.0);
+            }
 
-	private void setCars() {
-		if(sources == null || sinks == null) {
-			findSrcsSinks();
-		}
-		Map.Entry<String, Way> entry;
-		List<Node> road;
-		Iterator<Map.Entry<String, Way>> it = sessionObjects.getGraph().getInterMap().entrySet().iterator();
+        }
+        Map<Node, List<Way>> nodeWays = sessionObjects.getGraph().getNodeWays();
+        Node node;
+        double period, newPeriod;
+        for (int i = 0; i < sources.size(); i++) {
+            node = sources.get(i);
+            period = Integer.MAX_VALUE;
+            for (Way way : nodeWays.get(node)) {
+                switch (way.getTags().get("highway")) {
+                    case "service":
+                        newPeriod = CreationParams.SERVICE_SPAWN_PERIOD;
+                        break;
+                    case "living_street":
+                        newPeriod = CreationParams.LIVING_STREET_SPAWN_PERIOD;
+                        break;
+                    case "residential":
+                        newPeriod = CreationParams.RESIDENTIAL_SPAWN_PERIOD;
+                        break;
+                    case "tertiary":
+                        newPeriod = CreationParams.TERTIARY_SPAWN_PERIOD;
+                        break;
+                    case "secondary":
+                        newPeriod = CreationParams.SECONDARY_SPAWN_PERIOD;
+                        break;
+                    case "primary":
+                        newPeriod = CreationParams.PRIMARY_SPAWN_PRIOD;
+                        break;
+                    default:
+                        newPeriod = CreationParams.OTHER_SPAWN_PERIOD;
+                        break;
+                }
+                if (newPeriod < period)
+                    period = newPeriod;
+            }
+            periodes.set(i, period);
+        }
+        timePassed = new ArrayList<>(sources.size());
+        for(int i = 0; i < sources.size(); i++) {
+            timePassed.add(0.0);
+        }
+        carArrived = new ArrayList<>(sources.size());
+        for (int i = 0; i < sources.size(); i++) {
+            carArrived.add(true);
+        }
 
-		int i = 0;
-		int cars = 5;
 
-		while(it.hasNext() && i < cars) {
-			entry = it.next();
-			road = entry.getValue().getNodes();
-			for(Node nd : road) {
-				if(i >= cars)
-					break;
-				if(placeCar(nd) != null)
-					i++;
-			}
-		}
-		//sessionObjects.getCarHolder().dump();
-	}
+    }
 
-	public void maintain() {
-		for (Node nd : sources) {
-			//	placeCar(nd);
-		}
-	}
+    /**
+     * Помещает машины на карту в момент начала моделирования
+     */
 
-	private void findSrcsSinks() {
-		Map<Node, List<Node>> adjList = sessionObjects.getGraph().getAdjList();
-		List<Node> candidates = new ArrayList<>();
-		List<Node> sources = new ArrayList<>();
-		//find candidates
-		Map<String, Way> map = sessionObjects.getGraph().getInterMap();
-		Iterator<Map.Entry<String, Way>> mapIt = map.entrySet().iterator();
-		Map.Entry<String, Way> mapEntry;
-		List<Node> road;
-		int sumsize = 0;
-		while (mapIt.hasNext()) {
-			mapEntry = mapIt.next();
-			road = mapEntry.getValue().getNodes();
-			int size = road.size();
-			//System.out.println("size: "+ size + " way: " + mapEntry.getKey());
-			sumsize += size;
-			if (size > 0) {
-				candidates.add(road.get(0));
-				if (size > 1)
-					candidates.add(road.get(size - 1));
-			}
-		}
+    private void setCars() {
 
-		System.out.println("number of candidates to be src or sink:" + candidates.size
-				() + " sumsize: " + sumsize);
+        double initSpawnProbability = CreationParams.DEFAULT_LVL_INIT_SPAWN_PROBABILITY;
+        if (sources == null || sinks == null) {
+            findSrcsSinks();
+        }
+        if (periodes == null) {
+            setPeriodes();
+        }
+        List<Node> nodes = sessionObjects.getGraph().getVertexList();
 
-		List<Node> adjVertexes;
-		Iterator<Node> cndIt = candidates.iterator();
-		Node nd;
-		while (cndIt.hasNext()) {
-			nd = cndIt.next();
-			adjVertexes = adjList.get(nd);
-			if (adjVertexes != null) {
-				//TODO if(она не последняя ни для какой дороги)
-				sources.add(nd);
-				cndIt.remove();
-			}
-		}
-		this.sources = sources;
-		sinks = candidates;
+        int i = 0;
+        int cars = 100;
+        int sinksSize = sinks.size();
 
-		System.out.println("sources: " + sources.size() +" sinks: " + sinks.size());
-	}
+        for (Node nd : nodes) {
+            if (i >= cars)
+                break;
+            if(Math.random() <= initSpawnProbability) {
+                if (ccFactory.createCar(nd, sinks.get((int) Math.random() * sinksSize)) != null) {
+                    i++;
+                    System.out.println(i);
+                }
+            }
+        }
 
-	private Car placeCar(Node nd) {
+        //sessionObjects.getCarHolder().dump();
+    }
 
-		Distance distance = sessionObjects.getDistance();
-		CarHolder holder = sessionObjects.getCarHolder();
-		int sinksSize = sinks.size();
-		boolean carsNearby = false;
-		Car cr = null;
-		List<RoadThing> nearbyList;
+    public void maintain() {
+        double lastTimeQuant;
+        Instant instant;
+        int ndIndexInSources;
+        double spawnProbability;
+        Node currSource;
 
-		if (Math.random() <= CreationConstants.spawnProbability.get(busyLvl)) {
-			nearbyList = holder.getNearby(nd);
-			if(nearbyList != null) {
-				for (RoadThing car : holder.getNearby(nd)) {
-					if (distance.distanceBetween(nd, car.getPos()) > 20)
-						carsNearby = true;
-				}
-			}
-																								/*TODO: change 20 to RECOMMENDED_DIST*/
-			if (carsNearby) {
-				return null;
-			}else	{
-				for(int i = 0; i < 10 && cr == null; i++) {
+        Distance distance = sessionObjects.getDistance();
+        CarHolder holder = sessionObjects.getCarHolder();
+        int sinksSize = sinks.size();
+        boolean carsNearby = false;
+        Car cr = null;
+        List<RoadThing> nearbyList;
+        if(lastInstant == null) {
+            lastInstant = sessionObjects.getCurrInstant();
+            lastTimeQuant = WorldUpdater.FIRST_QUANT;
+        }
+        else {
+            instant = Instant.now();
+            lastTimeQuant = Duration.between(lastInstant,instant).toMillis()/1000;
+            lastInstant = instant;
+        }
 
-					//		System.out.println("i: " + i + " cr: " + cr);
+        for(int i = 0; i < sources.size(); i++) {
+            currSource = sources.get(i);
 
-					cr = ccFactory.createCar(nd, sinks.get((int) Math.random() *
-							sinksSize));
-				}
-			}
-		}
+            timePassed.set(i, timePassed.get(i) + lastTimeQuant);
+            if (timePassed.get(i) >= periodes.get(i)) {
+                carArrived.set(i, false);
+                timePassed.set(i, 0.0);
+            }
+            if (!carArrived.get(i)) {
+                spawnProbability = lastTimeQuant/(periodes.get(i) - timePassed.get(i));
+                if (Math.random() <= spawnProbability) {
+                    nearbyList = holder.getNearby(currSource);
+                    if (nearbyList != null) {
+                        for (RoadThing car : holder.getNearby(currSource)) {
+                            if (distance.distanceBetween(currSource, car.getPos()) < ModelConstants.RECOMMENDED_DISTANCE)
+                                carsNearby = true;
+                        }
+                    }
+                    if (!carsNearby) {
+                        for (int j = 0; j < 10 && cr == null; j++) {
+                            //		System.out.println("i: " + i + " cr: " + cr);
+                            cr = ccFactory.createCar(currSource, sinks.get((int) Math.random() *
+                                    sinksSize));
+                        }
+                    }
+                }
+            }
+        }
+    }
 
-		return cr;
+    private void findSrcsSinks() {
+        Map<Node, List<Node>> adjList = sessionObjects.getGraph().getAdjList();
+        List<Node> candidates = new ArrayList<>(); //первые и последние ноды в дорогах
+        List<Node> sources = new ArrayList<>();
+        //find candidates
+        Map<String, Way> map = sessionObjects.getGraph().getInterMap();
+        Iterator<Map.Entry<String, Way>> mapIt = map.entrySet().iterator();
+        Map.Entry<String, Way> mapEntry;
+        List<Node> road;
+        Map<Node, List<Way>> nodeWays = sessionObjects.getGraph().getNodeWays();
+        List<Way> incWays;
+        int sumsize = 0;
+        while (mapIt.hasNext()) {
+            mapEntry = mapIt.next();
+            road = mapEntry.getValue().getNodes();
+            int size = road.size();
+            //System.out.println("size: "+ size + " way: " + mapEntry.getKey());
+            sumsize += size;
+            if (size > 0) {
+                candidates.add(road.get(0));
+                if (size > 1)
+                    candidates.add(road.get(size - 1));
+            }
+        }
 
-	}
+        System.out.println("number of candidates to be src or sink:" + candidates.size
+                () + " sumsize: " + sumsize);
+
+        List<Node> adjVertexes;
+        Iterator<Node> cndIt = candidates.iterator();
+        Node nd;
+        List<Node> waysNodes;
+        boolean ndIsSource;
+
+        while (cndIt.hasNext()) {
+            nd = cndIt.next();
+            adjVertexes = adjList.get(nd);
+            ndIsSource = true;
+
+            if (adjVertexes != null && adjVertexes.size() != 0) {
+
+                incWays = nodeWays.get(nd);
+                //проверка на то, что nd не является последней ни для какой дороги
+                for (Way way : incWays) {
+                    waysNodes = way.getNodes();
+                    if (waysNodes.indexOf(nd) == waysNodes.size() - 1)
+                        ndIsSource = false;
+                }
+                if (ndIsSource)
+                    sources.add(nd);
+                cndIt.remove();
+            }
+        }
+        //теперь в candidates только вершины, из которых нет пути ни в какие другие
+        this.sources = sources;
+        sinks = candidates;
+        //добавим к точкам назначения точки старта, расположенные на маленьких дорогах
+        String highway;
+        for (Node node : sources) {
+            incWays = nodeWays.get(node);
+            for (Way way : incWays) {
+                highway = way.getTags().get("highway");
+                if (highway.equals("service") || highway.equals("living street") || highway.equals("residential"))
+                    sinks.add(node);
+                else;
+                    //System.out.println(highway);
+            }
+        }
+
+
+        System.out.println("sources: " + sources.size() + " sinks: " + sinks.size());
+    }
 }
 

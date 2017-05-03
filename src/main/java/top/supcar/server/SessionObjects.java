@@ -4,7 +4,7 @@ import java.time.Instant;
 import top.supcar.server.graph.Distance;
 import top.supcar.server.graph.Graph;
 import top.supcar.server.holder.CarHolder;
-import top.supcar.server.holder.TLKunteynir;
+import top.supcar.server.holder.TlKunteynir;
 import top.supcar.server.model.creation.CarSetter;
 import top.supcar.server.physics.Physics;
 import top.supcar.server.update.CarsUpdater;
@@ -23,9 +23,9 @@ public class SessionObjects {
 	private Graph graph;
 	private CarSetter carSetter;
 	private Instant currInstant;
-	private TLKunteynir tlKunteynir;
+	private TlKunteynir tlKunteynir;
 
-	public void setTlKunteynir(TLKunteynir tlKunteynir) {
+	public void setTlKunteynir(TlKunteynir tlKunteynir) {
 		this.tlKunteynir = tlKunteynir;
 	}
 
@@ -101,7 +101,7 @@ public class SessionObjects {
 		return carSetter;
 	}
 
-	public TLKunteynir getTlKunteynir() {
+	public TlKunteynir getTlKunteynir() {
 		return tlKunteynir;
 	}
 }

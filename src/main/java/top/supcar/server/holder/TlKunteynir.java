@@ -9,15 +9,15 @@ import java.util.Map;
 /**
  * Created by 1 on 01.05.2017.
  */
-public class TLKunteynir {
+public class TlKunteynir {
 	private Map<Node, TrafficLight> trafficLights;
-	public TLKunteynir() {
+	public TlKunteynir() {
 		this.trafficLights = new HashMap<>();
 	}
-	public TrafficLight getTL(Node node) {
+	public TrafficLight getTl(Node node) {
 		return trafficLights.get(node);
 	}
-	public void addTL(Node node, TrafficLight TL) {
+	public void addTl(Node node, TrafficLight TL) {
 		trafficLights.put(node, TL);
 	}
 }

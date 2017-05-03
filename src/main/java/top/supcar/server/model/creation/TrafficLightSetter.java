@@ -1,13 +1,10 @@
 package top.supcar.server.model.creation;
 
 import info.pavie.basicosmparser.model.Node;
-import info.pavie.basicosmparser.model.Way;
 import top.supcar.server.SessionObjects;
 import top.supcar.server.graph.Graph;
-import top.supcar.server.holder.TLKunteynir;
 import top.supcar.server.model.TrafficLight;
 
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -21,30 +18,47 @@ public class TrafficLightSetter {
 		this.sessionObjects = sessionObjects;
 	}
 
-	public void setTLs() {
+	public void setTls() {
 		Graph graph = sessionObjects.getGraph();
-		Map<String, Way> map = graph.getInterMap();
-		Iterator<Map.Entry<String, Way>> it = map.entrySet().iterator();
-		TLKunteynir tlKunteynir =  sessionObjects.getTlKunteynir();
-		double defPeriod =  CreationConstants.DEF_TL_PERIOD;
-		double period;
-		/*
+		List<Node> nodes = graph.getVertexList();
+        Map<Node, List<Node>> adjList = graph.getAdjList();
+        List<Node> adjNodes;
+        TrafficLight tl;
 
-				if(nd.getTags().get("highway") == "traffic_signals") {
-					if(tlKunteynir.getTL(nd) == null) {
-						period = defPeriod + (int)((Math.random() - 0.5)*defPeriod/2);
-						TrafficLight tl = new TrafficLight(nd, period);
-						tlKunteynir.addTL(nd, tl);
-
-
-					}
-				}
-			}*/
-
-
-
-
+        for(Node nd: nodes) {
+            if(isTlNode(nd)) {
+                initTlIfNecessary(nd);
+            }
+            adjNodes = adjList.get(nd);
+            for(Node adjnd : adjNodes) {
+                if(isTlNode(adjnd)) {
+                    initTlIfNecessary(adjnd);
+                    tl = sessionObjects.getTlKunteynir().getTl(adjnd);
+                    tl.addDirection(nd);
+                }
+            }
+        }
 
 	}
+
+	private void initTlIfNecessary(Node nd) {
+	    if(sessionObjects.getTlKunteynir().getTl(nd) == null) {
+            Map<Node, List<Node>> adjList = sessionObjects.getGraph().getAdjList();
+            List<Node> adjNodes = adjList.get(nd);
+            double defPeriod = CreationParams.DEF_TL_PERIOD;
+            double period;
+            period = defPeriod + (int) ((Math.random() - 0.5) * defPeriod / 2);
+            TrafficLight tl = new TrafficLight(nd, period);
+            for (Node adjnd : adjNodes) {
+                tl.addDirection(adjnd);
+            }
+            sessionObjects.getTlKunteynir().addTl(nd, tl);
+        }
+
+    }
+    private boolean isTlNode(Node nd) {
+        if(nd.getTags().get("highway") == "traffic_signals") return true;
+        else return false;
+    }
 
 }

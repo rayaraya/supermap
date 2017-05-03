@@ -12,8 +12,13 @@ public class Dijkstra {
     private Map<Node, Node> p = new HashMap<>();
     private Graph graph;
 
+    private List<Node> notWay;
+    private List<Node> way;
+
     public Dijkstra(Graph graph) {
         this.graph = graph;
+        notWay = new ArrayList<>(graph.getVertexList().size()/10);
+        way = new ArrayList<>(graph.getVertexList().size()/10);
     }
 
     private void initializeSingleSource(Node start) {
@@ -97,21 +102,29 @@ public class Dijkstra {
     }
 
     public List<Node> getWay(Node start, Node end) {
+        System.out.println("started getting way");
         dijkstra(start);
-        List<Node> notWay = new ArrayList<>();
-        List<Node> way = new ArrayList<>();
+        notWay.clear();
+        way.clear();
+
         notWay.add(end);
+
+        if(p.get(end) == null)
+            return null;
 
         while (end != start) {
             end = p.get(end);
             notWay.add(end);
+            System.out.println("notway size: " + notWay.size());
         }
         for (int i = notWay.size() - 1; i >= 0; i--) {
             way.add(notWay.get(i));
         }
+        System.out.println("ended getting way");
 
         if (way.size() == 0)
             return null;
+
 
         return way;
     }
