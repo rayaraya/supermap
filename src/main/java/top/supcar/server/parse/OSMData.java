@@ -134,7 +134,12 @@ public class OSMData {
 
     private String setPath(){
         URL furl = getClass().getResource("/top/supcar/server/parse/map.osm");
-        return furl.getPath();
+        String uniqPath = furl.getPath().replaceAll("map.osm", sessionObjects.toString() + ".osm");
+        return uniqPath;
+    }
+
+    public void clear(){
+        new File(filepath).delete();
     }
 
 }
