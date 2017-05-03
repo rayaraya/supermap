@@ -1,24 +1,24 @@
 package top.supcar.server.dijkstra;
 
 import info.pavie.basicosmparser.model.Node;
-import info.pavie.basicosmparser.model.Way;
-import top.supcar.server.graph.Distance;
 import top.supcar.server.graph.Graph;
-import top.supcar.server.parse.OSMData;
 
 import java.util.*;
 
 
-public class Dijkstra extends Graph {
-    private static final Double INFINITY = Double.longBitsToDouble(0x7ff0000000000000L);
+public class Dijkstra {
+
     private Map<Node, Double> d = new HashMap<>();
     private Map<Node, Node> p = new HashMap<>();
+    private Graph graph;
 
-    private void initializeSingleSource(List<Node> nodeList, Node start) {  // подавать vertexList
-        Iterator listIter = nodeList.iterator();
-        Iterator roadIter;
+    public Dijkstra(Graph graph) {
+        this.graph = graph;
+    }
+
+    private void initializeSingleSource(Node start) {
+        Iterator listIter = graph.getVertexList().iterator();
         Node currNode;
-        List<Node> road;
 
         while (listIter.hasNext()) {
             currNode = (Node) listIter.next();
@@ -48,9 +48,9 @@ public class Dijkstra extends Graph {
         public int compare(Node n1, Node n2) {
             double n1val = d.get(n1);
             double n2val = d.get(n2);
-            if(n1val > n2val)
+            if (n1val > n2val)
                 return 1;
-            else if(n1val < n2val)
+            else if (n1val < n2val)
                 return -1;
             else
                 return 0;
@@ -58,98 +58,61 @@ public class Dijkstra extends Graph {
     };
 
     //utility method to add data to queue
-    private void addDataToQueue(List<Node> list, Queue<Node> queue) {
-        Iterator nodeIter = list.iterator();
+    private void addDataToQueue(Queue<Node> queue) {
+        Iterator nodeIter = graph.getVertexList().iterator();
 
-        while (nodeIter.hasNext()){
+        while (nodeIter.hasNext()) {
             queue.add((Node) nodeIter.next());
         }
     }
 
     //utility method to poll data from queue
     private static void pollDataFromQueue(Queue<Node> queue) {
-        while(true){
+        while (true) {
             Node currNode = queue.poll();
-            if(currNode == null) break;
-            System.out.println("Processing with ID="+currNode.getId());
+            if (currNode == null) break;
+            System.out.println("Processing with ID=" + currNode.getId());
         }
     }
 
-    private Queue<Node> queue = new PriorityQueue<>(/*super.vertexList.size()*/100, nodeComparator);
+    private Queue<Node> queue = new PriorityQueue<>(100, nodeComparator);
 
-    public void dijkstra(List<Node> nodeList, Map<Node, List<Node>> adjList, Map<String, Double> weightList, Node u) {   // подавать adjList
-        initializeSingleSource(nodeList, u);
-        //System.out.println("Source: " + u.getId());
-        List<Node> s = new ArrayList<>();
-        addDataToQueue(nodeList, queue);
+    private void dijkstra(Node u) {
+        initializeSingleSource(u);
+        addDataToQueue(queue);
         Node v;
         List<Node> adjU;
-        while (!(queue.isEmpty())){
-            u=queue.poll();
-            s.add(u);
-            adjU = adjList.get(u);
+        while (!(queue.isEmpty())) {
+            u = queue.poll();
+            adjU = graph.getAdjList().get(u);
             if (adjU == null)
                 adjU = new ArrayList<>();
             Iterator nodeIter = adjU.iterator();
-            while (nodeIter.hasNext()){
+            while (nodeIter.hasNext()) {
                 v = (Node) nodeIter.next();
-                Double w = weightList.get(u.getId()+v.getId());
+                Double w = graph.getWeightList().get(u.getId() + v.getId());
                 relax(u, v, w);
             }
         }
     }
 
-    public List<Node> getWay(List<Node> nodeList, Map<Node, List<Node>> adjList, Map<String, Double> weightList, Node start, Node end){
-        dijkstra(nodeList, adjList, weightList, start);
+    public List<Node> getWay(Node start, Node end) {
+        dijkstra(start);
         List<Node> notWay = new ArrayList<>();
         List<Node> way = new ArrayList<>();
         notWay.add(end);
 
-        while (end != start){
+        while (end != start) {
             end = p.get(end);
             notWay.add(end);
         }
-        for(int i = notWay.size() - 1; i >= 0; i--) {
+        for (int i = notWay.size() - 1; i >= 0; i--) {
             way.add(notWay.get(i));
         }
 
-        if(way.size() == 0)
+        if (way.size() == 0)
             return null;
 
         return way;
     }
-
-
-    public static void main(String args[]){
-        String url = "http://www.overpass-api.de/api/xapi?way[bbox=30.258916543827283,59.917968282222404,30.34371726404213,59.94531882096226]";
-        Map<String,Way> roads;
-        OSMData data = new OSMData(url);
-        //data.loadData();
-        data.makeMap();
-        roads = data.getMap();
-        //data.printRoads();
-        Distance.setMilestones(roads);
-
-        Graph graph = new Graph();
-        Dijkstra dijkstra = new Dijkstra();
-        Map<String, Way> testMap;
-        testMap = data.getMap();
-        graph.setInterMap(testMap);
-        Map<String, Way> m;
-        m = graph.getInterMap();
-        graph.setMap();
-        graph.setVertexList();
-        graph.setWeightList();
-        Node first = graph.getVertexList().get(5);
-        Node last = graph.getVertexList().get(1080);
-        System.out.println(first +" "+ last);
-       // System.out.println(graph.getAdjList().size());
-       // System.out.println(graph.vertexList.size());
-
-        List<Node> road = dijkstra.getWay(graph.getVertexList(), graph.getAdjList(), graph.getWeightList(), first, last);
-        System.out.println(road);
-
-    }
-
-
 }
