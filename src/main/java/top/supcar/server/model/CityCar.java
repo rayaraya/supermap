@@ -2,6 +2,7 @@ package top.supcar.server.model;
 
 import info.pavie.basicosmparser.model.Node;
 import top.supcar.server.SessionObjects;
+import top.supcar.server.graph.Distance;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -13,13 +14,12 @@ import java.util.List;
 public class CityCar extends Car {
 
 	public CityCar(SessionObjects sessionObjects, List<Node> route, Driver driver,
-				   double maxAcc,
-				   double orientation) {
+				   double maxAcc, double mu) {
 		this.routeList = route;
 		this.speed = speed;
-		this.orientation = orientation;
-		this.destIndex = route.size() - 1;
+		//this.destIndex = route.size() - 1;
 		this.sessionObjects = sessionObjects;
+		this.mu = mu;
 		routeArray = new ArrayList<Node>();
 
 		Iterator it = route.iterator();
@@ -37,8 +37,10 @@ public class CityCar extends Car {
 		pos = new Node(0, route.get(0).getLat(), route.get(0).getLon());
 		toNextNode = sessionObjects.getDistance().distanceBetween(routeArray.get(0),
 				routeArray.get(1));
+		setMaxSpeeds();
 
 	}
+
 
 
 }

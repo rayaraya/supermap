@@ -35,15 +35,25 @@ public class CarHolder extends Holder {
 				//	System.out.println("remove");
 				if(row > -1 && line > -1)
 					putCar(car, row, line);
+				else {
+                    if(car.getPrevNodeIndex() != car.getRouteList().size() - 1) {
+                        System.out.println("car deleted and we dont know why, sending car and its route's last node");
+                        List<Node> dbg = new ArrayList<>();
+                        dbg.add(car.getPos());
+                        dbg.add(car.getRouteList().get(car.getRouteList().size() - 1));
+                        sessionObjects.getClientProcessor().drawNodes(dbg, 0.4           );
+
+                    }
+                }
 				//	dump();
 			}
 		} else if(row > -1 && line > -1) {
 			putCar(car, row, line);
 		}
-		List<Node> routelist = car.getRouteList();
+		ArrayList<Node> routelist = car.getRouteList();
 		if((routelist.size() - 1) == car.getPrevNodeIndex())
 		    removeCar(car);
-	}
+    }
 
 	public void removeCar(Car car) {
 								/*SelectedRect selectedRect = sessionObjects.getSelectedRect();
@@ -94,6 +104,8 @@ public class CarHolder extends Holder {
 			cell.remove(index);
 			adresses.remove(car);
 		}
+
+
 
 
 	}

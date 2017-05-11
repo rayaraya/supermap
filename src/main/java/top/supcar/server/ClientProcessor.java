@@ -15,6 +15,7 @@ import top.supcar.server.update.CarsUpdater;
 import top.supcar.server.update.WorldUpdater;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -40,6 +41,8 @@ public class ClientProcessor {
 		// ur = new Node(0, 59.945318820, 30.343717);
 
 		sessionObjects = new SessionObjects();
+		sessionObjects.setClientProcessor(this);
+
 		SelectedRect selectedRect = new SelectedRect(ll, ur);
 		sessionObjects.setSelectedRect(selectedRect);
 
@@ -52,9 +55,10 @@ public class ClientProcessor {
 		Map<String, Way> roads;
 		data = new OSMData(url, sessionObjects);
 		data.loadData();
+		System.out.println("map downloaded from XAPI ");
 		data.makeMap();
 		roads = data.getMap();
-		Graph graph = new Graph(roads);
+		Graph graph = new Graph(roads, sessionObjects);
 		sessionObjects.setGraph(graph);
 
 		CarHolder carHolder = new CarHolder(sessionObjects, 100);
@@ -125,5 +129,34 @@ public class ClientProcessor {
 		}
 
 	}
+	public void sendTestCoord(List<double[]> list) {
+        try {
+            String point = gson.toJson(list);
+            session.getRemote().sendString(point);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     *
+     * @param list
+     * @param pause in seconds
+     */
+    public void drawNodes(List<Node> list, double pause) {
+        List<double[]> coords = new ArrayList<>();
+        for(Node node : list) {
+            double[] coord = {node.getLon(), node.getLat()};
+            coords.add(coord);
+            sessionObjects.getClientProcessor().sendTestCoord(coords);
+            try {
+                Thread.sleep((long)pause*1000);
+            } catch (Exception e) {
+                System.out.println("EXEPTION!");
+            }
+
+        }
+
+    }
 }
 

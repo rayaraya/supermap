@@ -2,9 +2,12 @@ package top.supcar.server.graph;
 
 import java.util.*;
 
+import com.sun.org.apache.xpath.internal.operations.Mod;
 import info.pavie.basicosmparser.model.*;
 import info.pavie.basicosmparser.model.Node;
+import top.supcar.server.SessionObjects;
 import top.supcar.server.dijkstra.Dijkstra;
+import top.supcar.server.model.ModelConstants;
 
 public class Graph extends PriorityQueue{
     private static final double R = 6371000;
@@ -15,13 +18,15 @@ public class Graph extends PriorityQueue{
     private List<Node> vertexList;
     private Map<Node, List<Way>> nodeWays;
     private Dijkstra dijkstra;
+    private SessionObjects sessionObjects;
 
-    public Graph(Map<String,Way> map){
+    public Graph(Map<String,Way> map, SessionObjects sessionObjects){
+        this.sessionObjects = sessionObjects;
         setInterMap(map);
         setMap();
         setVertexList();
-        setWeightList();
         setNodeWays();
+        setWeightList();
         dijkstra = new Dijkstra(this);
     }
 
@@ -49,7 +54,7 @@ public class Graph extends PriorityQueue{
             currEntry = interMapIter.next();
             currWay = currEntry.getValue();
             String tmp = currWay.getTags().get("oneway");
-            boolean oneway = (tmp == null) || (tmp.equals("no"));
+            boolean twoway = (tmp == null) || (tmp.equals("no"));
 
             road = currWay.getNodes();
 
@@ -66,7 +71,7 @@ public class Graph extends PriorityQueue{
 
                     addInAdjList(currNode, nextNode);
 
-                    if (oneway) {
+                    if (twoway) {
                         addInAdjList(nextNode, currNode);
                     }
 
@@ -83,21 +88,6 @@ public class Graph extends PriorityQueue{
             adjList.put(a, adjNodes);
         }
         adjNodes.add(b);
-    }
-
-    private double getDistance(Node currNode, Node nextNode) {
-        double lat1 = currNode.getLat()*TRANS;
-        double lat2 = nextNode.getLat()*TRANS;
-        double dLat = lat2 - lat1;
-        double dLon = (nextNode.getLon()- currNode.getLon())*TRANS;
-
-        double x = Math.sin(dLat/2) * Math.sin(dLat/2) +
-                Math.cos(lat1) * Math.cos(lat2) *
-                        Math.sin(dLon/2) * Math.sin(dLon/2);
-
-        double p = 2 * Math.atan2(Math.sqrt(x), Math.sqrt(1-x));
-
-        return  R*p;
     }
 
     public Map<String, Double> getWeightList(){
@@ -140,7 +130,7 @@ public class Graph extends PriorityQueue{
 
             while (roadIter.hasNext()){
                 nNode = (Node) roadIter.next();
-                weightList.put(cNode.getId()+nNode.getId(), getDistance(cNode, nNode));
+                weightList.put(cNode.getId()+nNode.getId(), getWeight(cNode, nNode));
             }
         }
     }
@@ -179,5 +169,30 @@ public class Graph extends PriorityQueue{
 
     public List<Node> getWay(Node a, Node b) {
         return dijkstra.getWay(a, b);
+    }
+
+    private double getWeight(Node currNode, Node nextNode) {
+        Way wayWhereAreBothNodesArePlaced = null;
+        double speed;
+        List<Way> list1 = nodeWays.get(currNode), list2 = nodeWays.get(nextNode);
+        for(Way way1  : list1) {
+            for(Way way2 : list2) {
+                if(way1 == way2)
+                    wayWhereAreBothNodesArePlaced = way1;
+            }
+        }
+        speed = getAvgSpeed(wayWhereAreBothNodesArePlaced);
+
+        return sessionObjects.getDistance().distanceBetween(currNode, nextNode)/speed;
+    }
+
+    private double getAvgSpeed(Way way) {
+        double speed = ModelConstants.CITY_MAX_SPEED/2;
+        String highway = way.getTags().get("highway");
+        if(highway.equals("service") || highway.equals("living street") || highway.equals("residential")) {
+            speed /= 3;
+        }
+        return speed;
+
     }
 }

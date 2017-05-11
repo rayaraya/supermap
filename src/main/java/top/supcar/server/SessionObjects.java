@@ -24,6 +24,11 @@ public class SessionObjects {
 	private CarSetter carSetter;
 	private Instant currInstant;
 	private TlKunteynir tlKunteynir;
+	private ClientProcessor clientProcessor;
+
+	public void setClientProcessor(ClientProcessor clientProcessor) {
+		this.clientProcessor = clientProcessor;
+	}
 
 	public void setTlKunteynir(TlKunteynir tlKunteynir) {
 		this.tlKunteynir = tlKunteynir;
@@ -104,5 +109,10 @@ public class SessionObjects {
 	public TlKunteynir getTlKunteynir() {
 		return tlKunteynir;
 	}
+
+	public ClientProcessor getClientProcessor() {
+		return clientProcessor;
+	}
 }
+
 
