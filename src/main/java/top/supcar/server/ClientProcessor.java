@@ -14,6 +14,7 @@ import top.supcar.server.physics.Physics;
 import top.supcar.server.update.CarsUpdater;
 import top.supcar.server.update.WorldUpdater;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -26,14 +27,22 @@ public class ClientProcessor {
 	private Session session;
 	private Gson gson;
 	private int runFlag;
+	private int stopFlag;
 	private OSMData data;
+	private Kmp kmp;
 
 	public ClientProcessor(Session session) {
 		this.session = session;
 		this.gson = new Gson();
 		runFlag = 0;
+		stopFlag = 0;
 	}
 
+	public class Kmp extends Thread {
+		public void run() {
+			go();
+		}
+	}
 	private void prepare(Node ll, Node ur ) {
 		//String url = "http://www.overpass-api.de/api/xapi?way[bbox=30.258916543827283,59.917968282222404,30.34371726404213,59.94531882096226]";
         String url = "http://www.overpass-api.de/api/xapi?way[bbox="+ll.getLon() +"," +ll.getLat()+","+ur.getLon()+","+ur.getLat()+"]";
@@ -77,12 +86,25 @@ public class ClientProcessor {
 
 	private void go() {
 		WorldUpdater worldUpdater = sessionObjects.getWorldUpdater();
-		while (runFlag == 1) {
-			worldUpdater.update();
+		while (true) {
+			if(stopFlag == 1){
+				break;
+			}
+			if(runFlag == 1) {
+				worldUpdater.update();
+				//System.out.println(Instant.now());
+				try {
+					sendJson();
+					Thread.sleep(18);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
 			try {
-				sendJson();
-				Thread.sleep(20);
-			} catch (Exception e) {System.err.println("caught exception");}
+				Thread.sleep(2);
+			} catch (Exception e){
+				e.printStackTrace();
+			}
 		}
 
 	}
@@ -92,24 +114,40 @@ public class ClientProcessor {
 		data.clear();
 	}
 
+	public void pause(){
+		runFlag = 0;
+	}
+
+	public void play() {
+		runFlag = 1;
+	}
+
 	public void handleMsg (String message){
 
         Map result = (Map) gson.fromJson(message, Object.class);
-        if(result.keySet().toArray()[0].equals("SelectedRect")){
-            String[] coordinates = result.get(result.keySet().toArray()[0]).toString().split(",");
-            Node ll = new Node(0, Double.parseDouble(coordinates[1]), Double.parseDouble(coordinates[0]));
-            Node ur = new Node(0, Double.parseDouble(coordinates[3]), Double.parseDouble(coordinates[2]));
-            this.prepare(ll, ur);
-            this.go();
-        }
-        /*if(result.keySet().toArray()[0].equals("button_msg")){
+        if(result.keySet().toArray()[0].equals("SelectedRect")) {
+			String[] coordinates = result.get(result.keySet().toArray()[0]).toString().split(",");
+			Node ll = new Node(0, Double.parseDouble(coordinates[1]), Double.parseDouble(coordinates[0]));
+			Node ur = new Node(0, Double.parseDouble(coordinates[3]), Double.parseDouble(coordinates[2]));
+			this.prepare(ll, ur);
+			kmp = new Kmp();
+			kmp.start();
+			//this.go();
+		}
+
+        if(result.keySet().toArray()[0].equals("button_msg")){
             System.out.println("key: " +result.keySet().toArray()[0]);
             String msg = (String)result.get(result.keySet().toArray()[0]);
-            System.out.println("msg " + msg);
             if(msg.equals("close")){
                 stop();
-            }
-        }*/
+			}
+			if(msg.equals("pause")){
+				pause();
+			}
+			if(msg.equals("play")){
+				play();
+			}
+        }
     }
 	private void sendJson() {
 		ArrayList<double[]> carsCoordinates = new ArrayList<>();
@@ -158,5 +196,6 @@ public class ClientProcessor {
         }
 
     }
+
 }
 
