@@ -7,7 +7,8 @@ public class TMain {
 
         //System.out.println(args.length);
         //System.out.println(args[1]);
-        int port = Integer.parseInt(args[1]);
+        //int port = Integer.parseInt(args[1]);
+        int port = 7070;
         WSServer server = new WSServer(port);
         server.run();
     }

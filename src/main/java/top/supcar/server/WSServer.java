@@ -19,7 +19,7 @@ public class WSServer {
         //ThreadPool threadPool = new QueuedThreadPool(400);
         Server server = new Server();
         ServerConnector connector = new ServerConnector(server);
-        connector.setPort(7070);
+        connector.setPort(port);
 
         ServletContextHandler ctx = new ServletContextHandler(ServletContextHandler.SESSIONS);
         ctx.setContextPath("/");
