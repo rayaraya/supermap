@@ -96,6 +96,7 @@ public class ClientProcessor {
 				try {
 					sendJson();
 					Thread.sleep(18);
+
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -161,7 +162,9 @@ public class ClientProcessor {
 		}
 		try {
 			String point = gson.toJson(carsCoordinates);
-			session.getRemote().sendString(point);
+			if(session.isOpen()) {
+				session.getRemote().sendString(point);
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -170,7 +173,9 @@ public class ClientProcessor {
 	public void sendTestCoord(List<double[]> list) {
         try {
             String point = gson.toJson(list);
-            session.getRemote().sendString(point);
+			if(session.isOpen()) {
+				session.getRemote().sendString(point);
+			}
         } catch (Exception e) {
             e.printStackTrace();
         }

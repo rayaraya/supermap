@@ -6,11 +6,15 @@ import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.server.handler.HandlerList;
 import org.eclipse.jetty.server.handler.ResourceHandler;
 import org.eclipse.jetty.servlet.ServletContextHandler;
-import org.eclipse.jetty.util.thread.QueuedThreadPool;
-import org.eclipse.jetty.util.thread.ThreadPool;
 
 
 public class WSServer {
+    int port;
+
+    public WSServer(int port){
+        this.port = port;
+    }
+
     public void run(){
         //ThreadPool threadPool = new QueuedThreadPool(400);
         Server server = new Server();
@@ -40,7 +44,5 @@ public class WSServer {
             t.printStackTrace(System.err);
         }
 
-
     }
-
 }

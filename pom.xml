@@ -26,7 +26,7 @@
         <configuration>
           <archive>
             <manifest>
-              <mainClass>top.supcar.server.parse.TMain</mainClass>
+              <mainClass>top.supcar.server.WSServer.TMain</mainClass>
             </manifest>
           </archive>
           <descriptorRefs>
