@@ -166,6 +166,8 @@ public class ClientProcessor {
 				session.getRemote().sendString(point);
 			}
 		} catch (Exception e) {
+			stop();
+			System.out.println("closing connection on client side");
 			e.printStackTrace();
 		}
 
