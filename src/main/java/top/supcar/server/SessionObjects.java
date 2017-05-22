@@ -11,9 +11,12 @@ import top.supcar.server.update.CarsUpdater;
 import top.supcar.server.update.WorldUpdater;
 
 /**
- * Created by 1 on 24.04.2017.
+ * The holder for session objects.
+ * @author niquepolice
  */
+
 public class SessionObjects {
+//ATTRIBUTES
 	private CarHolder carHolder;
 	private SelectedRect selectedRect;
 	private Physics physics;
