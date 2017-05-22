@@ -6,7 +6,7 @@ import top.supcar.server.graph.Graph;
 import java.util.*;
 
 /**
- * This class allows to calculate the length of the shortest way between the vertexes of the {@link Graph} objects.
+ * This class allows to calculate the shortest way between the vertexes of the {@link Graph} objects.
  * The type of objects is {@link Node}.
  * Dijkstra algorithm is used.
  * @author nataboll
