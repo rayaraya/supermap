@@ -7,16 +7,20 @@ import org.eclipse.jetty.server.handler.HandlerList;
 import org.eclipse.jetty.server.handler.ResourceHandler;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 
+/**
+ * This class is a simple WebSocket server.
+ * It run all time and contain SocketHandler {@link SocketHandler}
+ * @author rayaraya
+ */
 
 public class WSServer {
-    int port;
+    private int port;
 
     public WSServer(int port){
         this.port = port;
     }
 
     public void run(){
-        //ThreadPool threadPool = new QueuedThreadPool(400);
         Server server = new Server();
         ServerConnector connector = new ServerConnector(server);
         connector.setPort(port);
@@ -37,7 +41,6 @@ public class WSServer {
         server.setHandler(handlers);
 
         try {
-
             server.start();
             server.join();
         } catch (Throwable t) {
