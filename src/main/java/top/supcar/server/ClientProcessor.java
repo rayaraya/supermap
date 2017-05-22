@@ -137,7 +137,6 @@ public class ClientProcessor {
 		}
 
         if(result.keySet().toArray()[0].equals("button_msg")){
-            System.out.println("key: " +result.keySet().toArray()[0]);
             String msg = (String)result.get(result.keySet().toArray()[0]);
             if(msg.equals("close")){
                 stop();
@@ -149,6 +148,25 @@ public class ClientProcessor {
 				play();
 			}
         }
+		if(result.keySet().toArray()[0].equals("speed_change")){
+			Map values = (Map)result.get(result.keySet().toArray()[0]);
+			double oldVal = (double)values.get(values.keySet().toArray()[0]);
+			double newVal = (double)values.get(values.keySet().toArray()[1]);
+			if(oldVal != newVal){
+				//TO DO smth
+			}
+
+		}
+		if(result.keySet().toArray()[0].equals("capacity_change")){
+			Map values = (Map)result.get(result.keySet().toArray()[0]);
+			double oldVal = (double)values.get(values.keySet().toArray()[0]);
+			double newVal = (double)values.get(values.keySet().toArray()[1]);
+			if(oldVal != newVal){
+				//TO DO smth
+			}
+		}
+
+
     }
 	private void sendJson() {
 		ArrayList<double[]> carsCoordinates = new ArrayList<>();
