@@ -2,6 +2,12 @@ package top.supcar.server;
 
 import top.supcar.server.WSServer;
 
+/**
+ * The main class to run the server and load environment variables.
+ * Static void main is written here.
+ * @author rayaraya
+ */
+
 public class TMain {
     public static void main(String[] args) throws Exception {
 
