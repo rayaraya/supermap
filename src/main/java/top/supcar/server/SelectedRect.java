@@ -8,6 +8,7 @@ import info.pavie.basicosmparser.model.Node;
  * @author niquepolice
  */
 
+
 public class SelectedRect {
 //ATTRIBUTES
 	/** The lower left corner. **/
