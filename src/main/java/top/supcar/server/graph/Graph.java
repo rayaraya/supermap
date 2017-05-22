@@ -228,6 +228,12 @@ public class Graph extends PriorityQueue{
         return dijkstra.getWay(a, b);
     }
 
+    /**
+     *
+     * @param currNode is a current {@link Node}
+     * @param nextNode is the next {@link Node}
+     * @return the weight of the way.
+     */
     private double getWeight(Node currNode, Node nextNode) {
         Way wayWhereAreBothNodesArePlaced = null;
         double speed;
