@@ -76,7 +76,6 @@ public class CSVExporter {
 				//Way element (list nodes)
 				Way currentWay = (Way) currentElem;
 				addInformations(csvWaysBuild, currentElem);
-				
 				csvWaysBuild.append(";\"["+
 				currentWay
 						.getNodes()
