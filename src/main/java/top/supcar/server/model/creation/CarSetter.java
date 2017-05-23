@@ -150,7 +150,7 @@ public class CarSetter {
                 period = newPeriod;
         }
 
-        return period*2.0/capacity;
+        return period*6.0/capacity;
     }
 
     private Node findSink() {
@@ -216,7 +216,7 @@ public class CarSetter {
     }
 
     public void maintain() {
-        double lastTimeQuant;
+        double lastTimeQuant = sessionObjects.getWorldUpdater().getTimeQuant();
         Instant instant;
         int ndIndexInSources;
         double spawnProbability;
@@ -224,7 +224,7 @@ public class CarSetter {
 
         int sinksSize = sinks.size();
         Car cr = null;
-        if(lastInstant == null) {
+       /* if(lastInstant == null) {
             lastInstant = Instant.now();
             System.out.println("li " + lastInstant);
             lastTimeQuant = WorldUpdater.FIRST_QUANT;
@@ -235,7 +235,7 @@ public class CarSetter {
             lastTimeQuant /= 1000;
           //  System.out.println("lasttq: " + lastTimeQuant + " duration: " +  Duration.between(lastInstant,instant).toMillis());
             lastInstant = instant;
-        }
+        }*/
 
         for(int i = 0; i < sources.size(); i++) {
             currSource = sources.get(i);

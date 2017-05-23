@@ -44,7 +44,7 @@ public class WorldUpdater {
 		sessionObjects.setCurrInstant(instant);
 		long timeQuantMillis = (long)(1000*FIRST_QUANT)*X;
 		if(lastInstant != null)
-			timeQuantMillis = Duration.between(lastInstant,instant).toMillis();
+			timeQuantMillis = Duration.between(lastInstant,instant).toMillis()*X;
 		timeQuant = ((double)timeQuantMillis)/1000;
 		lastInstant = instant;
 		sessionObjects.getCarsUpdater().update();
@@ -57,6 +57,7 @@ public class WorldUpdater {
 
 	public void setX (int X) {
 	    this.X = X;
+        System.out.println("X: " + X);
     }
 
 
