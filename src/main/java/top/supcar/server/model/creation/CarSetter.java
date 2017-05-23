@@ -1,8 +1,26 @@
+/*
+ * Copyright 2017 SUPMUP
+ *
+ * This file is part of Supermap.
+ *
+ * Supermap is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU General Public License as published by the Free Software Foundation, either
+ * version 3 of the License, or (at your option) any later version.
+ *
+ * Supermap is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+ * A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * Supermap. If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
 package top.supcar.server.model.creation;
 
 import info.pavie.basicosmparser.model.Node;
 import info.pavie.basicosmparser.model.Way;
-import top.supcar.server.SessionObjects;
+import top.supcar.server.session.SessionObjects;
 import top.supcar.server.graph.Distance;
 import top.supcar.server.holder.CarHolder;
 import top.supcar.server.model.Car;
@@ -26,6 +44,7 @@ public class CarSetter {
     private List<Boolean> carArrived;
     private List<Integer> sinksPriorities;
     private List<Integer> sinkPosInQueue;
+    private int capacity = 1;
 
     public CarSetter(SessionObjects sessionObjects, int busyLvl) {
         this.busyLvl = busyLvl;
@@ -58,13 +77,17 @@ public class CarSetter {
 
             periods.set(i, period);
         }
+
+    }
+
+    private void clearTpCa() {
         timePassed = new ArrayList<>(sources.size());
         for(int i = 0; i < sources.size(); i++) {
             timePassed.add(0.0);
         }
         carArrived = new ArrayList<>(sources.size());
         for (int i = 0; i < sources.size(); i++) {
-            carArrived.add(true);
+            carArrived.add(false);
         }
     }
 
@@ -127,7 +150,7 @@ public class CarSetter {
                 period = newPeriod;
         }
 
-        return period;
+        return period*2.0/capacity;
     }
 
     private Node findSink() {
@@ -157,7 +180,7 @@ public class CarSetter {
         double initSpawnProbability = CreationParams.DEFAULT_LVL_INIT_SPAWN_PROBABILITY;
 
         if (sources == null || sinks == null) findSrcsSinks();
-        if (periods == null) setPeriods();
+        if (periods == null) setPeriods(); clearTpCa();
         if (sinksPriorities == null) setSinksPriorities();
 
         List<Node> nodes = sessionObjects.getGraph().getVertexList();
@@ -184,6 +207,12 @@ public class CarSetter {
         System.out.println("cars setted at fist: " + i);
 
         //sessionObjects.getCarHolder().dump();
+    }
+
+    public void setCapacity(int capacity) {
+        this.capacity = capacity;
+        setPeriods();
+        setSinksPriorities();
     }
 
     public void maintain() {

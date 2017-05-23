@@ -1,4 +1,22 @@
-package top.supcar.server;
+/*
+ * Copyright 2017 SUPMUP
+ *
+ * This file is part of Supermap.
+ *
+ * Supermap is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU General Public License as published by the Free Software Foundation, either
+ * version 3 of the License, or (at your option) any later version.
+ *
+ * Supermap is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+ * A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * Supermap. If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+package top.supcar.server.session;
 
 import com.google.gson.Gson;
 import info.pavie.basicosmparser.model.Node;
@@ -14,7 +32,6 @@ import top.supcar.server.physics.Physics;
 import top.supcar.server.update.CarsUpdater;
 import top.supcar.server.update.WorldUpdater;
 
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -30,6 +47,7 @@ public class ClientProcessor {
 	private int stopFlag;
 	private OSMData data;
 	private Kmp kmp;
+	private int X = 1;
 
 	public ClientProcessor(Session session) {
 		this.session = session;
@@ -44,10 +62,7 @@ public class ClientProcessor {
 		}
 	}
 	private void prepare(Node ll, Node ur ) {
-		//String url = "http://www.overpass-api.de/api/xapi?way[bbox=30.258916543827283,59.917968282222404,30.34371726404213,59.94531882096226]";
         String url = "http://www.overpass-api.de/api/xapi?way[bbox="+ll.getLon() +"," +ll.getLat()+","+ur.getLon()+","+ur.getLat()+"]";
-        //ll = new Node(0, 59.9179682, 30.258916);
-		// ur = new Node(0, 59.945318820, 30.343717);
 
 		sessionObjects = new SessionObjects();
 		sessionObjects.setClientProcessor(this);
@@ -95,7 +110,7 @@ public class ClientProcessor {
 				//System.out.println(Instant.now());
 				try {
 					sendJson();
-					Thread.sleep(18);
+					Thread.sleep(20/X);
 
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -150,20 +165,20 @@ public class ClientProcessor {
         }
 		if(result.keySet().toArray()[0].equals("speed_change")){
 			Map values = (Map)result.get(result.keySet().toArray()[0]);
-			double oldVal = (double)values.get(values.keySet().toArray()[0]);
-			double newVal = (double)values.get(values.keySet().toArray()[1]);
-			if(oldVal != newVal){
-				//TO DO smth
-			}
+			Double oldVal = (Double)values.get(values.keySet().toArray()[0]);
+			Double newVal = (Double)values.get(values.keySet().toArray()[1]);
+			if(!oldVal.equals(newVal)){
+				setX(newVal.intValue());
+            }
 
 		}
 		if(result.keySet().toArray()[0].equals("capacity_change")){
 			Map values = (Map)result.get(result.keySet().toArray()[0]);
-			double oldVal = (double)values.get(values.keySet().toArray()[0]);
-			double newVal = (double)values.get(values.keySet().toArray()[1]);
-			if(oldVal != newVal){
-				//TO DO smth
-			}
+			Double oldVal = (Double)values.get(values.keySet().toArray()[0]);
+			Double newVal = (Double)values.get(values.keySet().toArray()[1]);
+			if(!oldVal.equals(newVal)){
+				setCapacity(newVal.intValue());
+            }
 		}
 
 
@@ -220,6 +235,14 @@ public class ClientProcessor {
 
         }
 
+    }
+
+    private void setX(int X) {
+        sessionObjects.getWorldUpdater().setX(X);
+        this.X = X;
+    }
+    private void setCapacity(int capacity) {
+        sessionObjects.getCarSetter().setCapacity(capacity);
     }
 
 }
