@@ -1,3 +1,22 @@
+/*
+    Copyright 2017 SUPMUP
+
+    This file is part of Supermap.
+
+    Supermap is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Supermap is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Supermap. If not, see <http://www.gnu.org/licenses/>.
+*/
+
 package top.supcar.server.parse;
 
 import info.pavie.basicosmparser.controller.*;
@@ -11,20 +30,34 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.*;
 
-public class OSMData {
+/**
+ * This class works with OSM data.
+ * It gets OSM data with help of {@link URLReader}.
+ * Data parsed with {@link info.pavie.basicosmparser.BasicOSMParser} and changed to have roads only.
+ * @author rayaraya
+ */
 
+public class OSMData {
+//ATTRIBUTES
+    /** Output file. **/
     private String filepath;
+    /** Parsed data. **/
     private Map<String,Element> map;
+    /** Changed parsed data. **/
     private Map<String,Way> siftedMap = new HashMap<String,Way>();
+    /** URL generated from coordinates. **/
     private String apiURL;
+    /** Objects of this session saved in {@link SessionObjects} **/
     private SessionObjects sessionObjects;
 
+//CONSTRUCTOR
     public OSMData(String apiURL, SessionObjects sessionObjects) {
         this.apiURL = apiURL;
         this.sessionObjects = sessionObjects;
         filepath = setPath();
     }
 
+//CONSTRUCTOR
     public OSMData() {filepath = setPath();
     }
 
@@ -32,14 +65,21 @@ public class OSMData {
         this.apiURL = apiURL;
     }
 
+    /**
+     * Creates object of {@link URLReader} and loads OSM data.
+      */
     public void loadData(){
         try {
             URLReader reader = new URLReader();
             reader.readWrite(apiURL, filepath);
-        } catch (Exception e) {//рассмотреть различные варианты возвр ошибок от апи
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
+
+    /**
+     * Parses OSM data in the file and changes it.
+      */
     public void makeMap() {
         OSMParser p = new OSMParser();
         File osmFile = new File(filepath);
@@ -51,6 +91,9 @@ public class OSMData {
         siftMap();
     }
 
+    /**
+     * Makes working data containing ways only.
+     */
     private void siftMap() {
         Iterator it = map.entrySet().iterator();
         String key , hkey;
@@ -165,6 +208,7 @@ public class OSMData {
 
         map = null;
     }
+
     public void printSmap(){
         Iterator it = siftedMap.entrySet().iterator();
         String key;
@@ -181,6 +225,7 @@ public class OSMData {
             System.out.println(nodes);
         }
     }
+
     public Map<String,Way> getMap(){
         return siftedMap;
     }
