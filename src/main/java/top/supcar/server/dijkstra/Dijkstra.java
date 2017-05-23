@@ -25,9 +25,9 @@ import top.supcar.server.graph.Graph;
 import java.util.*;
 
 /**
- * This class allows to calculate the shortest way between the vertexes of the {@link Graph} objects.
- * The type of objects is {@link Node}.
- * Dijkstra algorithm is used.
+ * This class allows to calculate the shortest way between the vertexes of the {@link Graph} objects <br>
+ * The type of objects is {@link Node} <br>
+ * Dijkstra algorithm is used <br>
  * @author nataboll
  */
 
@@ -55,8 +55,8 @@ public class Dijkstra {
 //OTHER METHODS
 
     /**
-     * Initializing lists for the search (two fields).
-     * @param start is start vertex.
+     * Initializing lists for the search (two fields) <br>
+     * @param start is start vertex
      */
     private void initializeSingleSource(Node start) {
         Iterator listIter = graph.getVertexList().iterator();
@@ -72,11 +72,11 @@ public class Dijkstra {
     }
 
     /**
-     * Relaxation procedure.
-     * Updates the length of the shortest way if necessary.
-     * @param u is the current vertex.
-     * @param v is the next vertex the current is connected with.
-     * @param w is the weight of the current edge.
+     * Relaxation procedure <br>
+     * Updates the length of the shortest way if necessary <br>
+     * @param u is the current vertex <br>
+     * @param v is the next vertex the current is connected with <br>
+     * @param w is the weight of the current edge
      */
     private void relax(Node u, Node v, Double w) {
         if (d.get(v) > d.get(u) + w) {
@@ -106,6 +106,7 @@ public class Dijkstra {
 
     /**
      * Utility method to add data to queue.
+     * @param queue current queue
      */
     private void addDataToQueue(Queue<Node> queue) {
         Iterator nodeIter = graph.getVertexList().iterator();
@@ -116,7 +117,7 @@ public class Dijkstra {
     }
 
     /**
-     * Utility method to poll data from queue.
+     * Utility method to poll data from queue <br>
      * @param queue is the queue to be analyzed.
      */
     private static void pollDataFromQueue(Queue<Node> queue) {
@@ -131,10 +132,10 @@ public class Dijkstra {
     private Queue<Node> queue = new PriorityQueue<>(100, nodeComparator);
 
     /**
-     * Initializes lists for the search (two fields).
-     * Fills the queue with all the vertexes.
-     * Realises Dijkstra algorithm.
-     * @param u is the first vertex.
+     * Initializes lists for the search (two fields) <br>
+     * Fills the queue with all the vertexes <br>
+     * Realises Dijkstra algorithm <br>
+     * @param u is the first vertex
      */
     private void dijkstra(Node u) {
         initializeSingleSource(u);
@@ -156,13 +157,13 @@ public class Dijkstra {
     }
 
     /**
-     * Makes initialisation.
-     * Fills the queue with all the vertexes.
-     * Realises Dijkstra algorithm.
-     * Finds the way according to ancestors.
-     * @param start is the vertex to start.
-     * @param end is the finish.
-     * @return the shortest way between start and finish.
+     * Makes initialisation <br>
+     * Fills the queue with all the vertexes <br>
+     * Realises Dijkstra algorithm <br>
+     * Finds the way according to ancestors <br>
+     * @param start is the vertex to start <br>
+     * @param end is the finish <br>
+     * @return the shortest way between start and finish
      */
     public List<Node> getWay(Node start, Node end) {
         dijkstra(start);

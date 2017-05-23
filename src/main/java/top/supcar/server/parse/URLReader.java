@@ -23,8 +23,8 @@ import java.net.*;
 import java.io.*;
 
 /**
- * Class for establishing access to distant server resources and communication.
- * It sends a request to server and gets file with OSM data being written in another file.
+ * Class for establishing access to distant server resources and communication <br>
+ * It sends a request to server and gets file with OSM data being written in another file <br>
  * @author rayaraya
  */
 
@@ -32,10 +32,10 @@ public class URLReader {
 //OTHER METHODS
 
     /**
-     * Creates file with OSM data.
-     * @param surl is the URL object.
-     * @param filepath is the path to the file being created.
-     * @throws Exception in case of API faults.
+     * Creates file with OSM data <br>
+     * @param surl is the URL object <br>
+     * @param filepath is the path to the file being created <br>
+     * @throws Exception in case of API faults <br>
      */
     public void readWrite(String surl, String filepath) throws Exception {
         System.out.println(filepath);
@@ -54,4 +54,3 @@ public class URLReader {
         in.close();
     }
 }
-

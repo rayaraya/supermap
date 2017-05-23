@@ -36,7 +36,6 @@ import java.util.Map;
 public class Distance {
 
 
-
 	private double metersPerDegLat;
 	private double metersPerDegLon;
 
@@ -54,6 +53,8 @@ public class Distance {
 		metersPerDegLon = distanceBetween(x0y0, x0y1)/(x0y1.getLon() - x0y0.getLon());
 	}
 	/**
+	 * @param a start
+	 * @param b end
 	 * @return distance in meters
 	 */
 	public double distanceBetween(Node a, Node b) {

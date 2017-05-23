@@ -3,8 +3,8 @@ package top.supcar.server;
 import info.pavie.basicosmparser.model.Node;
 
 /**
- * This class is for choosing the area for modeling.
- * The area is a rectangle.
+ * This class is for choosing the area for modeling <br>
+ * The area is a rectangle <br>
  * @author niquepolice
  */
 
@@ -31,9 +31,9 @@ public class SelectedRect {
 	}
 
 	/**
-	 * Is the {@link Node} in the rectangle.
-	 * @param node is the {@link Node}.
-	 * @return true if it is in rectangle and false if it is not.
+	 * Is the {@link Node} in the rectangle <br>
+	 * @param node is the {@link Node} <br>
+	 * @return true if it is in rectangle and false if it is not
 	 */
 	public boolean inRectangle(Node node) {
 

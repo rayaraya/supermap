@@ -89,7 +89,7 @@ public abstract class Holder {
 
 	/**
 	 *
-	 * @param lon
+	 * @param lon lon
 	 * @return row(X coordinate in the table) if lon is correct, -1 otherwise
 	 */
 
@@ -100,7 +100,7 @@ public abstract class Holder {
 	}
 	/**
 	 *
-	 * @param lat
+	 * @param lat lat
 	 * @return line(Y coordinate in the table) if lat is correct, -1 otherwise
 	 */
 	protected int findLine(double lat) {

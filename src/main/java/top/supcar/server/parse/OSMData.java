@@ -31,9 +31,9 @@ import java.net.URL;
 import java.util.*;
 
 /**
- * This class works with OSM data.
- * It gets OSM data with help of {@link URLReader}.
- * Data parsed with {@link info.pavie.basicosmparser.BasicOSMParser} and changed to have roads only.
+ * This class works with OSM data <br>
+ * It gets OSM data with help of {@link URLReader} <br>
+ * Data parsed with {@link info.pavie.basicosmparser.BasicOSMParser} and changed to have roads only <br>
  * @author rayaraya
  */
 

@@ -203,7 +203,7 @@ public class ClientProcessor {
 
     /**
      *
-     * @param list
+     * @param list list
      * @param pause in seconds
      */
     public void drawNodes(List<Node> list, double pause) {

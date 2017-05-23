@@ -8,8 +8,8 @@ import org.eclipse.jetty.server.handler.ResourceHandler;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 
 /**
- * This class is a simple WebSocket server.
- * It run all time and contain SocketHandler {@link SocketHandler}
+ * This class is a simple WebSocket server <br>
+ * It run all time and contain SocketHandler {@link SocketHandler} <br>
  * @author rayaraya
  */
 

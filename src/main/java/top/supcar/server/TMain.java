@@ -3,8 +3,8 @@ package top.supcar.server;
 import top.supcar.server.WSServer;
 
 /**
- * The main class to run the server and load environment variables.
- * Static void main is written here.
+ * The main class to run the server and load environment variables <br>
+ * Static void main is written here <br>
  * @author rayaraya
  */
 

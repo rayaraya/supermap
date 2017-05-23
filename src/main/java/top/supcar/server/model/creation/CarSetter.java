@@ -14,9 +14,6 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.*;
 
-/**
- * Created by 1 on 26.04.2017.
- */
 public class CarSetter {
     private SessionObjects sessionObjects;
     private CityCarFactory ccFactory;
@@ -151,9 +148,9 @@ public class CarSetter {
         return sink;
     }
 
-    /**
-     * Помещает машины на карту в момент начала моделирования
-     */
+
+     // Помещает машины на карту в момент начала моделирования
+
 
     private void setCars() {
 
@@ -237,7 +234,7 @@ public class CarSetter {
     }
 
     /**
-     *
+     * @param source source
      * @return true if there are cars too close to the source, false if a new car could be placed at the source
      */
 

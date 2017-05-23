@@ -28,10 +28,10 @@ import top.supcar.server.dijkstra.Dijkstra;
 import top.supcar.server.model.ModelConstants;
 
 /**
- * This class allows you to make graph which consists of {@link Node} and edges between them.
- * The graph are being built according to {@link info.pavie.basicosmparser.BasicOSMParser} data.
- * The edges correspond to {@link Relation} between {@link Node}.
- * Four objects are being created for one graph.
+ * This class allows you to make graph which consists of {@link Node} and edges between them <br>
+ * The graph are being built according to {@link info.pavie.basicosmparser.BasicOSMParser} data <br>
+ * The edges correspond to {@link Relation} between {@link Node} <br>
+ * Four objects are being created for one graph <br>
  * @author nataboll
 */
 
@@ -129,9 +129,9 @@ public class Graph extends PriorityQueue{
     }
 
     /**
-     * Adds 'b' in the list of 'a' is connected with.
-     * @param a is where to add.
-     * @param b is what to add.
+     * Adds 'b' in the list of 'a' is connected with <br>
+     * @param a is where to add <br>
+     * @param b is what to add
      */
     private void addInAdjList(Node a, Node b) {
         List<Node> adjNodes = adjList.get(a);
@@ -238,10 +238,10 @@ public class Graph extends PriorityQueue{
     }
 
     /**
-     * Finds the shortest way between two vertexes using {@link Dijkstra}.
-     * @param a is the start.
-     * @param b is the end.
-     * @return the way.
+     * Finds the shortest way between two vertexes using {@link Dijkstra} <br>
+     * @param a is the start <br>
+     * @param b is the end <br>
+     * @return the way
      */
     public List<Node> getWay(Node a, Node b) {
         return dijkstra.getWay(a, b);
@@ -249,9 +249,9 @@ public class Graph extends PriorityQueue{
 
     /**
      *
-     * @param currNode is a current {@link Node}
-     * @param nextNode is the next {@link Node}
-     * @return the weight of the way.
+     * @param currNode is a current {@link Node} <br>
+     * @param nextNode is the next {@link Node} <br>
+     * @return the weight of the way
      */
     private double getWeight(Node currNode, Node nextNode) {
         Way wayWhereAreBothNodesArePlaced = null;
@@ -269,8 +269,8 @@ public class Graph extends PriorityQueue{
     }
 
     /**
-     * @param way is the chosen way where an average speed is needed to be calculated.
-     * @return the average speed in the road.
+     * @param way is the chosen way where an average speed is needed to be calculated <br>
+     * @return the average speed in the road
      */
     private double getAvgSpeed(Way way) {
         double speed = ModelConstants.CITY_MAX_SPEED/2;

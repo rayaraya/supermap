@@ -30,7 +30,6 @@ import org.xml.sax.SAXException;
 /**
  * This class is a simple command line interface.
  * It parses OSM XML and create a CSV export.
- * You have to use it like this : basicosmparser <Input OSM XML> <Output folder>
  * @author Adrien PAVIE
  */
 public class BasicOSMParser {

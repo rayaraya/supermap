@@ -30,7 +30,7 @@ public class TrafficLight {
 
 	/**
 	 * adds direction, if isn't added before
-	 * @param direction
+	 * @param direction direction
 	 */
 	public void addDirection(Node direction) {
 		if(!directions.contains(direction))

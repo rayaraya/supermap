@@ -8,7 +8,7 @@ import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 
 
 /**
- * This class uses standard WebSocket API.
+ * This class uses standard WebSocket API <br>
  * @author rayaraya
  */
 
